@@ -1,0 +1,3081 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>EL CUARTO DEL TOQUE — Entrenador de Guitarra Flamenca</title>
+  <style>
+    :root {
+      --bg-main: #12100e;
+      --bg-card: #1c1916;
+      --bg-elevated: #26211d;
+      --bg-input: #151210;
+      --wood-border: #3a2e25;
+      --amber: #d97706;
+      --amber-light: #f59e0b;
+      --copper: #b45309;
+      --text-main: #f5f2eb;
+      --text-muted: #a89f91;
+      --text-dim: #736b5e;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3b82f6;
+      --radius: 10px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-serif: Georgia, "Times New Roman", serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding-bottom: 85px;
+      overflow-x: hidden;
+    }
+
+    /* CABECERA Y CADENA DE OBJETIVOS */
+    header {
+      background: linear-gradient(180deg, #1f1a16 0%, var(--bg-main) 100%);
+      border-bottom: 1px solid var(--wood-border);
+      padding: 14px 16px 10px;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+
+    .brand-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      letter-spacing: 0.06em;
+      color: var(--amber-light);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .palo-badge {
+      background: var(--bg-elevated);
+      border: 1px solid var(--amber);
+      color: var(--amber-light);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .breadcrumb-chain {
+      display: flex;
+      overflow-x: auto;
+      gap: 6px;
+      padding-bottom: 4px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      scrollbar-width: none;
+    }
+    .breadcrumb-chain::-webkit-scrollbar { display: none; }
+
+    .chain-node {
+      white-space: nowrap;
+      background: var(--bg-card);
+      border: 1px solid var(--wood-border);
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .chain-node strong {
+      color: var(--amber-light);
+    }
+    .chain-arrow {
+      color: var(--text-dim);
+      align-self: center;
+    }
+
+    /* CONTENEDOR PRINCIPAL */
+    main {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 14px 16px;
+    }
+
+    .tab-section {
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+    .tab-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* TARJETAS Y PANELES */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--wood-border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--wood-border);
+      padding-bottom: 10px;
+    }
+
+    .card-title {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      color: var(--text-main);
+    }
+
+    .section-subtitle {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--amber-light);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    /* RELOJ FLAMENCO DE 12 TIEMPOS */
+    .compas-box {
+      background: radial-gradient(circle at center, #251f1a 0%, #161310 100%);
+      border: 1px solid var(--amber);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .clock-wrapper {
+      position: relative;
+      width: 230px;
+      height: 230px;
+      margin: 10px auto 14px;
+      border-radius: 50%;
+      border: 2px dashed var(--wood-border);
+      background: #13100d;
+    }
+
+    .clock-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      width: 100px;
+    }
+
+    .clock-current-beat {
+      font-family: var(--font-serif);
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: var(--amber-light);
+      line-height: 1;
+    }
+
+    .clock-beat-role {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .beat-node {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      margin-left: -17px;
+      margin-top: -17px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--wood-border);
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.08s ease;
+    }
+
+    .beat-node.accent {
+      border: 2px solid var(--amber);
+      color: var(--amber-light);
+      font-weight: 800;
+    }
+
+    .beat-node.cierre-mark {
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.4);
+    }
+
+    .beat-node.muted-beat {
+      opacity: 0.35;
+      border-style: dotted;
+    }
+
+    .beat-node.active {
+      background: var(--amber-light);
+      color: #000;
+      transform: scale(1.22);
+      box-shadow: 0 0 14px var(--amber-light);
+      z-index: 5;
+    }
+
+    .beat-node.active.accent {
+      background: #ef4444;
+      border-color: #fff;
+      color: #fff;
+      box-shadow: 0 0 18px #ef4444;
+    }
+
+    .metronome-controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .bpm-row {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-input);
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--wood-border);
+    }
+
+    .bpm-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--amber);
+    }
+
+    /* BOTONES Y CONTROLES */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      border: 1px solid var(--wood-border);
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--amber);
+      border-color: var(--amber-light);
+      color: #12100e;
+      font-weight: 700;
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: var(--danger);
+      color: #fca5a5;
+    }
+
+    .btn-success {
+      background: rgba(16, 185, 129, 0.18);
+      border-color: var(--success);
+      color: #6ee7b7;
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.78rem;
+    }
+
+    .duration-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0 12px;
+    }
+
+    .pill-btn {
+      flex: 1;
+      min-width: 52px;
+      padding: 8px 6px;
+      text-align: center;
+      background: var(--bg-input);
+      border: 1px solid var(--wood-border);
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .pill-btn.active {
+      background: var(--amber);
+      color: #12100e;
+      border-color: var(--amber-light);
+      font-weight: 700;
+    }
+
+    .fatigue-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: rgba(217, 119, 6, 0.1);
+      border: 1px solid var(--copper);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .fatigue-toggle.active {
+      background: rgba(245, 158, 11, 0.25);
+      border-color: var(--amber-light);
+    }
+
+    /* BLOQUE DE 4 PREGUNTAS INICIALES */
+    .four-questions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .q-box {
+      background: var(--bg-elevated);
+      border-left: 3px solid var(--amber);
+      padding: 9px 10px;
+      border-radius: 4px;
+    }
+
+    .q-box .q-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      color: var(--amber-light);
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .q-box .q-val {
+      font-size: 0.8rem;
+      color: var(--text-main);
+    }
+
+    /* TARJETA DE EJERCICIO PRESCRITO */
+    .exercise-card {
+      background: var(--bg-card);
+      border: 1px solid var(--wood-border);
+      border-radius: var(--radius);
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    .exercise-card.done-conseguido { border-left: 4px solid var(--success); }
+    .exercise-card.done-parcial { border-left: 4px solid var(--warning); }
+    .exercise-card.done-reforzar { border-left: 4px solid var(--danger); }
+    .exercise-card.done-no_entiendo { border-left: 4px solid var(--info); }
+
+    .ex-top {
+      padding: 14px 16px;
+      background: var(--bg-elevated);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ex-meta-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: var(--bg-input);
+      color: var(--text-muted);
+      border: 1px solid var(--wood-border);
+    }
+
+    .badge-amber {
+      color: var(--amber-light);
+      border-color: var(--copper);
+    }
+
+    .ex-body {
+      padding: 14px 16px;
+    }
+
+    .pedagogical-why {
+      background: rgba(217, 119, 6, 0.08);
+      border-left: 2px solid var(--amber);
+      padding: 7px 10px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .ascii-tab {
+      background: #0d0b09;
+      border: 1px solid var(--wood-border);
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: #fcd34d;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.35;
+      margin: 10px 0;
+    }
+
+    .ex-grid-details {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      font-size: 0.83rem;
+      margin-top: 10px;
+    }
+
+    .detail-item {
+      background: var(--bg-input);
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(58, 46, 37, 0.6);
+    }
+
+    .detail-item strong {
+      color: var(--amber-light);
+      display: block;
+      font-size: 0.73rem;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .criterion-box {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 9px 11px;
+      border-radius: 6px;
+      margin: 10px 0;
+      font-size: 0.83rem;
+    }
+
+    .criterion-box strong {
+      color: #6ee7b7;
+      display: block;
+      font-size: 0.73rem;
+      text-transform: uppercase;
+    }
+
+    /* TEMPORIZADOR DE EJERCICIO */
+    .timer-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #14110f;
+      border: 1px solid var(--wood-border);
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin: 12px 0;
+    }
+
+    .timer-display {
+      font-family: var(--font-mono);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--amber-light);
+    }
+
+    /* FORMULARIO DE REGISTRO */
+    .log-panel {
+      background: var(--bg-elevated);
+      border-top: 1px solid var(--wood-border);
+      padding: 12px 16px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      background: var(--bg-input);
+      border: 1px solid var(--wood-border);
+      border-radius: 6px;
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 56px;
+    }
+
+    /* BARRAS DE PROGRESO Y COMPETENCIAS */
+    .comp-item {
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--wood-border);
+    }
+
+    .comp-level-pills {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .lvl-btn {
+      padding: 6px 4px;
+      font-size: 0.7rem;
+      text-align: center;
+      background: var(--bg-input);
+      border: 1px solid var(--wood-border);
+      color: var(--text-muted);
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .lvl-btn.active {
+      background: var(--amber);
+      color: #12100e;
+      font-weight: 700;
+      border-color: var(--amber-light);
+    }
+
+    /* NAVEGACIÓN INFERIOR MOBILE-FIRST */
+    nav.bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #181411;
+      border-top: 1px solid var(--wood-border);
+      display: flex;
+      justify-content: space-around;
+      padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+      z-index: 100;
+    }
+
+    .nav-item {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 6px 2px;
+      cursor: pointer;
+    }
+
+    .nav-item.active {
+      color: var(--amber-light);
+    }
+
+    .nav-icon {
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+
+    /* CALENDARIO NO PUNITIVO Y GRÁFICOS */
+    .calendar-strip {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .cal-day {
+      background: var(--bg-input);
+      border: 1px solid var(--wood-border);
+      border-radius: 6px;
+      padding: 6px 4px;
+      text-align: center;
+      font-size: 0.72rem;
+    }
+
+    .cal-day.practiced {
+      background: rgba(217, 119, 6, 0.22);
+      border-color: var(--amber-light);
+      color: var(--amber-light);
+      font-weight: 700;
+    }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 110px;
+      padding: 12px 8px 4px;
+      background: var(--bg-input);
+      border: 1px solid var(--wood-border);
+      border-radius: 6px;
+      margin-top: 8px;
+    }
+
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .bar-fill {
+      width: 100%;
+      max-width: 28px;
+      background: linear-gradient(180deg, var(--amber-light), var(--copper));
+      border-radius: 3px 3px 0 0;
+      min-height: 4px;
+    }
+
+    .bar-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 78px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--amber-light);
+      color: #12100e;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      z-index: 200;
+      display: none;
+    }
+
+    details summary {
+      cursor: pointer;
+      color: var(--amber-light);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 6px 0;
+      user-select: none;
+    }
+
+    @media (max-width: 520px) {
+      .four-questions-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CABECERA Y CADENA DE SENTIDO PEDAGÓGICO -->
+  <header>
+    <div class="brand-row">
+      <div class="brand-title">El Cuarto del Toque</div>
+      <div class="palo-badge" id="headerPaloBadge">Etapa 1 · Soleá</div>
+    </div>
+    <div class="breadcrumb-chain" id="pedagogicalChain" aria-label="Jerarquía de objetivos">
+      <!-- Renderizado dinámico -->
+    </div>
+  </header>
+
+  <main>
+    <!-- ==========================================
+         SECCIÓN 1: HOY (ENTRENAMIENTO DIARIO)
+         ========================================== -->
+    <section id="tab-hoy" class="tab-section active">
+
+      <!-- Las 4 preguntas inmediatas -->
+      <div class="four-questions-grid" id="fourQuestionsBox">
+        <!-- Renderizado dinámico -->
+      </div>
+
+      <!-- Configuración rápida de la sesión del día -->
+      <div class="card">
+        <div class="section-subtitle">Adaptar sesión de hoy</div>
+        <label>Tiempo disponible hoy (conserva el núcleo pedagógico):</label>
+        <div class="duration-pills" id="durationSelector">
+          <button class="pill-btn" data-min="10">10m</button>
+          <button class="pill-btn" data-min="15">15m</button>
+          <button class="pill-btn" data-min="20">20m</button>
+          <button class="pill-btn active" data-min="30">30m</button>
+          <button class="pill-btn" data-min="45">45m</button>
+          <button class="pill-btn" data-min="60">60m</button>
+        </div>
+
+        <div class="fatigue-toggle" id="fatigueToggle" onclick="toggleFatigueMode()">
+          <div>
+            <strong>Modo «Hoy estoy cansado»</strong>
+            <div style="font-size:0.75rem; color:var(--text-muted);">Reduce exigencia mecánica; prioriza compás, sonoridad y cierres sin perder continuidad.</div>
+          </div>
+          <span id="fatigueStatusBadge" class="badge">Desactivado</span>
+        </div>
+      </div>
+
+      <!-- RELOJ FLAMENCO UNIVERSAL DE 12 TIEMPOS (EMPIEZA EN EL 12) -->
+      <div class="compas-box">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div class="section-subtitle" style="margin-bottom:0;">Reloj Flamenco Universal (Web Audio)</div>
+            <div style="font-size:0.74rem; color:var(--text-muted);">Cierre en el <strong>10</strong> · Semicierre en el <strong>3</strong> · Ciclo inicia en <strong>12</strong></div>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btnPlayClock" onclick="toggleClock()">▶ Iniciar Compás</button>
+        </div>
+
+        <div class="clock-wrapper" id="clockFace">
+          <div class="clock-center">
+            <div class="clock-current-beat" id="clockCurrentNum">12</div>
+            <div class="clock-beat-role" id="clockCurrentRole">Acento Ciclo</div>
+          </div>
+        </div>
+
+        <div class="metronome-controls">
+          <div class="bpm-row">
+            <span style="font-size:0.78rem; font-weight:700; min-width:78px;">BPM: <strong id="bpmValLabel" style="color:var(--amber-light);">76</strong></span>
+            <input type="range" id="bpmSlider" min="45" max="160" value="76" oninput="updateBpm(this.value)">
+            <button class="btn btn-sm" onclick="adjustBpm(-2)">-2</button>
+            <button class="btn btn-sm" onclick="adjustBpm(2)">+2</button>
+          </div>
+
+          <select id="clockPaloMode" onchange="changeClockMode(this.value)">
+            <option value="solea">Soleá / Alegrías (12 t. empieza en 12)</option>
+            <option value="buleria">Soleá por Bulerías / Bulerías (12 t. soniquete)</option>
+            <option value="tangos">Tangos / Tientos (4 tiempos binarios)</option>
+          </select>
+
+          <button class="btn btn-sm" id="btnMuteTrap" onclick="toggleSilentTrap()">
+            Silenciar 7-8-9: OFF
+          </button>
+        </div>
+      </div>
+
+      <!-- PRESCRIPCIÓN DE LA SESIÓN DE HOY -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="section-subtitle" id="sessionHeaderCode">SESIÓN PRESCRITA</div>
+            <h2 class="card-title" id="sessionMainTitle">Cargando sesión...</h2>
+          </div>
+          <button class="btn btn-sm" onclick="regenerateDailySession(true)">↻ Recalcular</button>
+        </div>
+        <p id="sessionGoalText" style="font-size:0.86rem; color:var(--text-muted); margin-bottom:10px;"></p>
+        <div id="sessionEngineReason" class="pedagogical-why"></div>
+      </div>
+
+      <!-- LISTA DE EJERCICIOS DE LA SESIÓN -->
+      <div id="sessionExercisesList"></div>
+
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 2: PROGRAMA E ITINERARIO (9 PALOS + COMPOSICIÓN)
+         ========================================== -->
+    <section id="tab-programa" class="tab-section">
+      <div class="card">
+        <div class="section-subtitle">Estructura de 4 Semanas — Palo Activo</div>
+        <h2 class="card-title" style="margin-bottom:8px;">Bloque de 4 Semanas por Soleá</h2>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
+          El avance de etapa depende exclusivamente de las competencias demostradas, nunca del simple paso del calendario.
+        </p>
+        <div class="duration-pills" id="weekSelector">
+          <button class="pill-btn active" onclick="selectProgramWeek(1)">Semana 1 (Desarrollo)</button>
+          <button class="pill-btn" onclick="selectProgramWeek(2)">Semana 2 (Desarrollo)</button>
+          <button class="pill-btn" onclick="selectProgramWeek(3)">Semana 3 (Desarrollo)</button>
+          <button class="pill-btn" onclick="selectProgramWeek(4)">Semana 4 (Consolidación)</button>
+        </div>
+        <div id="weekPlanDetails"></div>
+      </div>
+
+      <!-- MÓDULO DE COMPOSICIÓN Y LENGUAJE PROPIO -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="section-subtitle">Objetivo 5 · Creatividad desde el Día 1</div>
+            <h2 class="card-title">Laboratorio de Composición de Falsetas</h2>
+          </div>
+        </div>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
+          <strong>Principio fundamental:</strong> La duración de tu frase musical no es lo mismo que la duración del ciclo de compás (12 tiempos). Puedes construir motivos de 3 o 4 tiempos que se desplazan sobre la matriz de 12 tiempos, siempre que resuelvas y aterrices en el tiempo <strong>10</strong>.
+        </p>
+        <div id="compositionLabsList"></div>
+      </div>
+
+      <!-- ITINERARIO DE 9 ETAPAS (PALOS) -->
+      <div class="card">
+        <div class="section-subtitle">Itinerario Pedagógico Completo (9 Etapas)</div>
+        <h2 class="card-title" style="margin-bottom:12px;">Mapa de Palos y Criterios de Superación</h2>
+        <div id="itinerarioPalosList"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 3: REPERTORIO (FALSETAS Y CANTE)
+         ========================================== -->
+    <section id="tab-repertorio" class="tab-section">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="section-subtitle">Biblioteca Personal</div>
+            <h2 class="card-title">Repertorio de Falsetas y Piezas</h2>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="toggleForm('formNewFalseta')">+ Añadir Falseta</button>
+        </div>
+
+        <!-- Formulario Nueva Falseta -->
+        <div id="formNewFalseta" style="display:none; background:var(--bg-elevated); padding:12px; border-radius:8px; margin-bottom:14px;">
+          <div class="form-row">
+            <div>
+              <label>Palo</label>
+              <select id="repFalsetaPalo">
+                <option value="Soleá">Soleá</option>
+                <option value="Tangos">Tangos</option>
+                <option value="Soleá por bulerías">Soleá por bulerías</option>
+                <option value="Bulerías">Bulerías</option>
+                <option value="Alegrías">Alegrías</option>
+                <option value="Seguiriyas">Seguiriyas</option>
+                <option value="Fandangos">Fandangos</option>
+                <option value="Tientos">Tientos</option>
+                <option value="Tarantas">Tarantas</option>
+              </select>
+            </div>
+            <div>
+              <label>Nombre descriptivo de la falseta</label>
+              <input type="text" id="repFalsetaNombre" placeholder="Ej. Falseta de alzapúa en Do/Si7">
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label>Guitarrista / Referencia tradicional</label>
+              <input type="text" id="repFalsetaAutor" placeholder="Ej. Tradicional Alcalá / Propia">
+            </div>
+            <div>
+              <label>Técnica principal</label>
+              <select id="repFalsetaTecnica">
+                <option value="Pulgar">Pulgar</option>
+                <option value="Alzapúa">Alzapúa</option>
+                <option value="Arpegio">Arpegio</option>
+                <option value="Picado">Picado</option>
+                <option value="Ligados">Ligados</option>
+                <option value="Trémolo">Trémolo</option>
+                <option value="Rasgueo / Compás">Rasgueo / Compás</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label>Tempo de estudio actual (BPM)</label>
+              <input type="number" id="repFalsetaBpmActual" value="65">
+            </div>
+            <div>
+              <label>Tempo objetivo (BPM)</label>
+              <input type="number" id="repFalsetaBpmObj" value="85">
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label>Estado de aprendizaje</label>
+              <select id="repFalsetaEstado">
+                <option value="Por fragmentos">Estudiando por fragmentos</option>
+                <option value="En compás lento">Dentro de compás lento</option>
+                <option value="Memorizada">Memorizada y fluida</option>
+                <option value="Integrada en pieza">Integrada en repertorio</option>
+              </select>
+            </div>
+            <div>
+              <label>Enlace a vídeo / audio de referencia</label>
+              <input type="url" id="repFalsetaLink" placeholder="https://...">
+            </div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <label>Observaciones técnicas y compases críticos</label>
+            <textarea id="repFalsetaObs" placeholder="Ej. Cuidar limpieza del ligado en el tiempo 8 antes del cierre..."></textarea>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="saveNewFalseta()">Guardar en Repertorio</button>
+        </div>
+
+        <div id="repertorioFalsetasList"></div>
+      </div>
+
+      <!-- REPERTORIO DE ACOMPAÑAMIENTO AL CANTE -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="section-subtitle">Objetivo 3 · Escucha y Respuesta</div>
+            <h2 class="card-title">Cuaderno de Acompañamiento al Cante</h2>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="toggleForm('formNewCante')">+ Añadir Estilo</button>
+        </div>
+
+        <div id="formNewCante" style="display:none; background:var(--bg-elevated); padding:12px; border-radius:8px; margin-bottom:14px;">
+          <div class="form-row">
+            <div>
+              <label>Palo y Variante / Estilo</label>
+              <input type="text" id="repCanteEstilo" placeholder="Ej. Soleá de Alcalá / Soleá de Utrera">
+            </div>
+            <div>
+              <label>Cantaor / Grabación de referencia</label>
+              <input type="text" id="repCanteCantaor" placeholder="Ej. Referencia de estudio personal">
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label>Posición guitarrística y Cejilla</label>
+              <input type="text" id="repCanteTono" placeholder="Ej. Por Arriba (Mi frigio) / Cejilla al 3">
+            </div>
+            <div>
+              <label>Nivel de dominio</label>
+              <select id="repCanteDominio">
+                <option value="Reconociendo tercios">Reconociendo entradas y tercios</option>
+                <option value="Practicando con grabación">Acompañando sobre grabación</option>
+                <option value="Solvencia en silencios y cierres">Solvencia en silencios y contestaciones</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-bottom:10px;">
+            <label>Estructura del cante, llamadas, cambios armónicos y cierres</label>
+            <textarea id="repCanteEstructura" placeholder="Ej. Salida en Mi -> Caída al sexto grado (Do) en el primer tercio -> Paso a Fa en valiente -> Resolución Mi en el 10..."></textarea>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="saveNewCante()">Guardar Ficha de Cante</button>
+        </div>
+
+        <div id="repertorioCanteList"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 4: PROGRESO, COMPETENCIAS Y DIARIO
+         ========================================== -->
+    <section id="tab-progreso" class="tab-section">
+
+      <!-- EVALUACIÓN POR COMPETENCIAS (OBSERVABLE, NO POR MINUTOS) -->
+      <div class="card">
+        <div class="section-subtitle">Autoevaluación Observable</div>
+        <h2 class="card-title">Evaluación por Competencias (6 Dimensiones)</h2>
+        <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:12px;">
+          <strong>Nota de rigor:</strong> Estas valoraciones son autoevaluaciones registradas por el alumno basadas en criterios observables (la aplicación no analiza audio directamente ni otorga niveles por acumular minutos).
+        </p>
+        <div id="competenciasEvalList"></div>
+      </div>
+
+      <!-- DIARIO DE ENTRENAMIENTO NO PUNITIVO -->
+      <div class="card">
+        <div class="section-subtitle">Seguimiento sin Rachas Punitivas</div>
+        <h2 class="card-title">Diario y Constancia Orgánica</h2>
+        <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:10px;">
+          Los días de descanso consolidan la memoria motora. Aquí se registra el trabajo real sin penalizar pausas familiares o laborales.
+        </p>
+
+        <div class="four-questions-grid" id="statsSummaryGrid"></div>
+
+        <label style="margin-top:10px;">Actividad en los últimos 14 días:</label>
+        <div class="calendar-strip" id="calendarStrip14"></div>
+
+        <label style="margin-top:14px;">Evolución de Tempo (BPM) en registros recientes:</label>
+        <div class="bar-chart" id="tempoChartBox"></div>
+      </div>
+
+      <!-- DIFICULTADES RECURRENTES Y DUDAS -->
+      <div class="card">
+        <div class="section-subtitle">Diagnóstico del Motor Pedagógico</div>
+        <h2 class="card-title">Ejercicios Pendientes de Refuerzo y Dudas</h2>
+        <div id="recurringIssuesBox"></div>
+      </div>
+
+      <!-- HISTORIAL DE SESIONES REGISTRADAS -->
+      <div class="card">
+        <div class="section-subtitle">Cuaderno de Bitácora</div>
+        <h2 class="card-title">Historial de Ejercicios Registrados</h2>
+        <div id="historyLogsList"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================
+         SECCIÓN 5: REVISIÓN QUINCENAL CON CHATGPT / IA
+         ========================================== -->
+    <section id="tab-revision" class="tab-section">
+      <div class="card">
+        <div class="section-subtitle">Auditoría Pedagógica cada 15 Días</div>
+        <h2 class="card-title">Exportar Revisión para el Profesor (ChatGPT)</h2>
+        <p style="font-size:0.83rem; color:var(--text-muted); margin-bottom:12px;">
+          Genera el paquete estructurado de los últimos 15 días con tus sesiones, tiempos reales, tempos alcanzados, ejercicios marcados como «Necesito reforzar» o «No entiendo», y estado de competencias.
+        </p>
+
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;">
+          <button class="btn btn-primary" onclick="exportReviewJSONFile()">
+            ⬇ Exportar revisión para ChatGPT (.JSON)
+          </button>
+          <button class="btn" onclick="copyReviewWithMasterPrompt()">
+            📋 Copiar Informe + Prompt + JSON al Portapapeles
+          </button>
+        </div>
+
+        <label>Informe legible por humanos + JSON de los últimos 15 días:</label>
+        <textarea id="exportHumanReportBox" rows="8" readonly style="font-family:var(--font-mono); font-size:0.75rem;"></textarea>
+      </div>
+
+      <!-- IMPORTAR PLAN CORREGIDO DEL PROFESOR -->
+      <div class="card">
+        <div class="section-subtitle">Adaptación Curricular</div>
+        <h2 class="card-title">Importar Correcciones del Profesor (.JSON)</h2>
+        <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:10px;">
+          Sube el archivo JSON devuelto por ChatGPT o pega su contenido abajo. El sistema validará la estructura y te mostrará una vista previa antes de aplicar los cambios sin borrar tu historial.
+        </p>
+
+        <div style="margin-bottom:10px;">
+          <label>Subir archivo .json de revisión:</label>
+          <input type="file" id="importFileInput" accept=".json" onchange="handleFileSelectReview(event)">
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <label>O pegar directamente el bloque JSON generado por ChatGPT:</label>
+          <textarea id="importJsonTextarea" rows="5" placeholder='{"diagnosticoPeriodo": "...", "objetivosQuincena": [...], ...}' style="font-family:var(--font-mono); font-size:0.75rem;"></textarea>
+        </div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="validateAndPreviewImport()">🔍 Validar y Ver Vista Previa</button>
+          <button class="btn btn-danger btn-sm" id="btnRollbackPlan" onclick="rollbackPreviousPlan()" style="display:none;">↩ Recuperar Planificación Previa</button>
+        </div>
+
+        <!-- Caja de vista previa antes de confirmar -->
+        <div id="importPreviewContainer" style="display:none; margin-top:14px; background:var(--bg-elevated); border:1px solid var(--amber); padding:12px; border-radius:8px;">
+          <div class="section-subtitle">Vista Previa Validada</div>
+          <div id="importPreviewContent" style="font-size:0.82rem; margin-bottom:12px;"></div>
+          <button class="btn btn-success btn-sm" onclick="confirmApplyImportedPlan()">✓ Confirmar e Incorporar a mi Planificación</button>
+        </div>
+      </div>
+
+      <!-- COPIAS DE SEGURIDAD COMPLETAS -->
+      <div class="card">
+        <div class="section-subtitle">Seguridad de Datos Locales</div>
+        <h2 class="card-title">Copia de Seguridad Total y Restauración</h2>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">
+          Todos tus datos se guardan en el almacenamiento local (`localStorage`) de este dispositivo. Puedes descargar una copia completa o restaurarla cuando cambies de móvil.
+        </p>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <button class="btn btn-sm" onclick="downloadFullBackup()">💾 Descargar Copia de Seguridad Total</button>
+          <label class="btn btn-sm" style="margin:0; cursor:pointer;">
+            📂 Restaurar Copia Total
+            <input type="file" accept=".json" style="display:none;" onchange="restoreFullBackupFile(event)">
+          </label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toastMsg" class="toast">Registro guardado</div>
+
+  <!-- NAVEGACIÓN INFERIOR DE 5 SECCIONES -->
+  <nav class="bottom-nav" aria-label="Navegación principal">
+    <button class="nav-item active" onclick="switchTab('hoy', this)">
+      <span class="nav-icon">🔥</span>
+      <span>1. Hoy</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('programa', this)">
+      <span class="nav-icon">🧭</span>
+      <span>2. Programa</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('repertorio', this)">
+      <span class="nav-icon">🎼</span>
+      <span>3. Repertorio</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('progreso', this)">
+      <span class="nav-icon">📊</span>
+      <span>4. Progreso</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('revision', this)">
+      <span class="nav-icon">🔄</span>
+      <span>5. Revisión</span>
+    </button>
+  </nav>
+
+  <script>
+    /*************************************************************************
+     * CAPA 1: BASE DE DATOS PEDAGÓGICA (ITINERARIO, SOLEÁ 4 SEMANAS, EJERCICIOS)
+     *************************************************************************/
+    const STORAGE_KEY = 'CUARTO_DEL_TOQUE_STATE_V1';
+
+    const ITINERARIO_9_PALOS = [
+      {
+        etapa: 1,
+        id: 'solea',
+        nombre: 'Soleá',
+        foco: 'Compás de 12 tiempos, cadencias, llamadas y fraseo con peso',
+        objetivosGenerales: 'Interiorizar la matriz madre de 12 tiempos (empezando en el 12), dominar el apoyo de pulgar y alzapúa, y aterrizar con seguridad en el tiempo 10.',
+        objetivosTecnicos: 'Ataque apoyado de pulgar (p), rasgueo de 4 dedos desgranado, alzapúa limpia en bordones, arpegio doble y picado corto de remate.',
+        objetivosRitmicos: 'Sentir el tiempo 3 como semicierre/llamada, el 6-8 como puente de tensión y el 10 como tierra firme de resolución sin mirar ni contar del 1 al 12.',
+        objetivosCante: 'Reconocer la salida del cantaor, caída al sexto grado (Do mayor por arriba) y cierre tras el tercio.',
+        objetivosRepertorio: 'Dominar 2 llamadas clásicas, 2 falsetas tradicionales (pulgar y arpegio/alzapúa) y 1 estructura completa con cierre.',
+        objetivosCreativos: 'Componer motivos de 3 notas y desplazarlos sobre los tiempos 12-3 y 4-6 resolviendo en el 10.',
+        pruebaEvaluacion: 'Tocar 4 ciclos consecutivos a 76 BPM combinando: 1 compás de llamada, 2 de falseta y 1 de acompañamiento con el modo Silencio 7-8-9 activado sin perder el 10.',
+        criteriosSuperacion: 'Cero pérdidas de ciclo, pulgar apoyado con peso en el bordón y relajación de hombros.'
+      },
+      {
+        etapa: 2,
+        id: 'tangos',
+        nombre: 'Tangos',
+        foco: 'Pulso binario, tierra firme y contratiempos (cierre en el 3)',
+        objetivosGenerales: 'Dominar el aire binario flamenco (4 tiempos con acento/cierre en el 3 y silencio o pellizco en el 4).',
+        objetivosTecnicos: 'Golpe en tapa simultáneo con índice hacia abajo, rasgueos percusivos y ligados en cadencia andaluza (La frigio / por medio).',
+        objetivosRitmicos: 'Entrar a contratiempo en el 1 y medio y clavar los remates secos en el tiempo 3.',
+        objetivosCante: 'Acompañar letras de 3 y 4 tercios manteniendo el soniquete de mano derecha sin atropellar.',
+        objetivosRepertorio: '1 falseta de pulgar/ligados por medio y 2 remates de tango tradicional.',
+        objetivosCreativos: 'Crear pregunta-respuesta rítmica de 2 compases jugando con el silencio del tiempo 4.',
+        pruebaEvaluacion: 'Mantener 3 minutos de soniquete de tangos intercalando 2 falsetas y 3 cierres a contratiempo a 112 BPM.',
+        criteriosSuperacion: 'Estabilidad absoluta del pulso sin acelerar en los remates.'
+      },
+      {
+        etapa: 3,
+        id: 'solea_bulerias',
+        nombre: 'Soleá por bulerías',
+        foco: 'Transición rítmica, caminar a compás y cierres con empuje',
+        objetivosGenerales: 'Conectar la solemnidad de la Soleá con el caminar elástico de la Bulería (115-135 BPM).',
+        objetivosTecnicos: 'Alzapúa rítmica continua y rasgueos de abanico controlados.',
+        objetivosRitmicos: 'Sentir el ciclo de 12 tiempos dividido en pulsos internos y acentos en 12, 3, 6, 8, 10.',
+        objetivosCante: 'Sostener el colchón rítmico en tonos medios (La frigio) y marcar llamadas de subida.',
+        objetivosRepertorio: '1 falseta de alzapúa y 1 falseta ligada con cierre en el 10.',
+        objetivosCreativos: 'Transformar una falseta aprendida en Soleá al aire de Soleá por bulerías.',
+        pruebaEvaluacion: 'Ejecutar estructura de salida, 2 falsetas y cierre a 126 BPM sin rigidez en el antebrazo.',
+        criteriosSuperacion: 'Soniquete caminante sin convertirlo en un 3/4 clásico.'
+      },
+      {
+        etapa: 4,
+        id: 'bulerias',
+        nombre: 'Bulerías',
+        foco: 'Soniquete, medios compases (6 tiempos) y remates al aire',
+        objetivosGenerales: 'Liberarse del conteo numérico pasando a pensar en bloques sonoros y medios compases.',
+        objetivosTecnicos: 'Velocidad relajada en ligados de mano izquierda, golpes de tapa y picado articulado.',
+        objetivosRitmicos: 'Dominar cierres en el 10, cortes en el 6 y entradas en el tiempo 12 o en el 1.',
+        objetivosCante: 'Acompañar cuplés y bulerías cortas respondiendo a los giros del cante.',
+        objetivosRepertorio: '3 remates cortos, 2 falsetas modernas/tradicionales.',
+        objetivosCreativos: 'Improvisar variaciones rítmicas de un mismo motivo de 4 notas.',
+        pruebaEvaluacion: 'Entrar y salir en compás de bulerías a 160 BPM alternando compás y falsetas cortas.',
+        criteriosSuperacion: 'Precisión en los cierres y aire festivo sin tensión.'
+      },
+      {
+        etapa: 5,
+        id: 'alegrias',
+        nombre: 'Alegrías',
+        foco: 'Estructura en modo mayor (Cantiñas), llamadas, silencio y escobilla',
+        objetivosGenerales: 'Dominar el toque brillante en modo mayor (Mi mayor / La mayor con cejilla) y la arquitectura completa de un baile/cante.',
+        objetivosTecnicos: 'Arpegios limpios en acordes abiertos, pulgar melódico y rasgueos brillantes.',
+        objetivosRitmicos: 'Llamadas clásicas de Alegrías (12-1-2-3), paso al Silencio (modo menor) y subida de Castellana.',
+        objetivosCante: 'Diferenciar salida (tirititrán), copla, juguetillo y cambio al silencio.',
+        objetivosRepertorio: '1 falseta de campanelas/arpegio y el pasaje clásico del Silencio.',
+        objetivosCreativos: 'Componer un juguetillo rítmico de 1 compás.',
+        pruebaEvaluacion: 'Tocar una estructura completa reducida: Salida, Falseta, Cante, Silencio y Cierre.',
+        criteriosSuperacion: 'Claridad tímbrica entre el carácter mayor luminoso y el recogimiento del silencio.'
+      },
+      {
+        etapa: 6,
+        id: 'seguiriyas',
+        nombre: 'Seguiriyas',
+        foco: 'Pulsos desiguales (3+3+2+2+2), tensión dramática y cante jondo',
+        objetivosGenerales: 'Comprender el reloj interno de 5 acentos desiguales de la Seguiriya.',
+        objetivosTecnicos: 'Rasgueos profundos de peso, ligados desgarrados y control del silencio dramático.',
+        objetivosRitmicos: 'Interiorizar la rueda (1 - 2 - 3 - 4 - 5) donde 1 y 2 son cortos y 3, 4, 5 son largos.',
+        objetivosCante: 'Respetar los ayes y tercios largos del cantaor dando apoyo justo en los remates.',
+        objetivosRepertorio: '1 falseta tradicional de pulgar y cierres clásicos por medio.',
+        objetivosCreativos: 'Crear una contestación breve de 1 ciclo entre tercios.',
+        pruebaEvaluacion: 'Acompañar una grabación de Seguiriya entrando con exactitud en los cierres de cada tercio.',
+        criteriosSuperacion: 'Sentido del peso dramático y dominio de la métrica amalgama.'
+      },
+      {
+        etapa: 7,
+        id: 'fandangos',
+        nombre: 'Fandangos (Huelva y Naturales)',
+        foco: 'Acompañamiento armónico (6 tercios) y diálogo libre/compás',
+        objetivosGenerales: 'Dominar tanto el compás rítmico de Huelva como el diálogo libre de los fandangos naturales.',
+        objetivosTecnicos: 'Arpegios expresivos, trémolo corto y adornos en los cambios armónicos (Do - Fa - Mi - La - Sol - Fa - Mi).',
+        objetivosRitmicos: 'Caer al compás exacto tras el sexto tercio del cantaor.',
+        objetivosCante: 'Anticpación auditiva de cada uno de los 6 versos/tercios.',
+        objetivosRepertorio: '2 introducciones por Fandangos de Huelva y cierres para cada cambio de acorde.',
+        objetivosCreativos: 'Componer los adornos de contestación entre los tercios 2, 3 y 4.',
+        pruebaEvaluacion: 'Acompañar 2 letras seguidas marcando limpiamente la rueda armónica completa.',
+        criteriosSuperacion: 'Escucha activa y colocación armónica impecable.'
+      },
+      {
+        etapa: 8,
+        id: 'tientos',
+        nombre: 'Tientos',
+        foco: 'Control del pulso lento binario, cadencia con peso y articulación',
+        objetivosGenerales: 'Dominar la contención rítmica, el swing pesado y la articulación del toque por Tientos.',
+        objetivosTecnicos: 'Picado con peso, ligados dobles y mordentes en el tiempo débil.',
+        objetivosRitmicos: 'Subdivisión ternaria/atresillada dentro del pulso binario lento.',
+        objetivosCante: 'Sostener el compás sin precipitarse y preparar el cambio final a Tangos.',
+        objetivosRepertorio: '1 falseta clásica por Tientos y llamada de remate.',
+        objetivosCreativos: 'Variar una frase binaria añadiendo mordentes flamencos.',
+        pruebaEvaluacion: 'Tocar a 74 BPM manteniendo el rebote rítmico sin correr hacia el tiempo 3.',
+        criteriosSuperacion: 'Aire majestuoso y limpieza absoluta de articulación.'
+      },
+      {
+        etapa: 9,
+        id: 'tarantas',
+        nombre: 'Tarantas',
+        foco: 'Toque libre de Levante, campanelas, trémolo y expresión',
+        objetivosGenerales: 'Desarrollar la respiración musical sin metrónomo en la tonalidad de Fa# frigio.',
+        objetivosTecnicos: 'Trémolo flamenco (p - i - a - m - i), cuerdas al aire (campanelas) y ligados expresivos.',
+        objetivosRitmicos: 'Pulso elástico (rubato flamenco): acelerar y frenar con sentido discursivo.',
+        objetivosCante: 'Acompañar los tercios libres de Levante usando disonancias de segunda y séptima mayor.',
+        objetivosRepertorio: 'Preludio de campanelas y 1 falseta de trémolo o pulgar.',
+        objetivosCreativos: 'Componer un preludio libre de 1 minuto con discurso de principio a fin.',
+        pruebaEvaluacion: 'Interpretar un toque corto por Tarantas grabado con control dinámico.',
+        criteriosSuperacion: 'Calidad de sonido, equilibrio del trémolo y madurez expresiva.'
+      }
+    ];
+
+    const PLAN_4_SEMANAS_SOLEA = [
+      {
+        semana: 1,
+        tipo: 'Desarrollo Progresivo',
+        objetivoPrincipal: 'Interiorizar el ciclo de 12 tiempos (empezando en el 12) y fijar el cierre en el tiempo 10 con ataque apoyado de pulgar.',
+        objetivosSecundarios: [
+          'Corregir la postura de mano derecha viniendo de guitarra eléctrica (caída natural de muñeca y apoyo en tapa).',
+          'Diferenciar auditiva y mecánicamente el semicierre del tiempo 3 y el cierre definitivo del 10.',
+          'Crear el primer motivo propio de 3 notas dentro del compás.'
+        ],
+        competenciasEntrenadas: ['Compás', 'Técnica (Pulgar y Rasgueo)', 'Composición'],
+        ejerciciosPrioritarios: ['SOL_CAL_01', 'SOL_COMP_01', 'SOL_PUL_01', 'SOL_CREA_01'],
+        pruebaSemanal: 'Ejecutar 3 ciclos seguidos de llamada y paseo de Soleá a 68 BPM cerrando en el 10 sin contar en voz alta.'
+      },
+      {
+        semana: 2,
+        tipo: 'Desarrollo Progresivo',
+        objetivoPrincipal: 'Dominar la Alzapúa por Arriba y ejecutar la primera falseta tradicional de pulgar sin perder la tierra del 10.',
+        objetivosSecundarios: [
+          'Desarrollar el giro de muñeca en la alzapúa (pulgar abajo-arriba + golpe en tapa).',
+          'Estudiar por fragmentos la Falseta 1 de Soleá (cadencia frigia La-Sol-Fa-Mi).',
+          'Introducir el acompañamiento básico al primer tercio de Soleá de Alcalá.'
+        ],
+        competenciasEntrenadas: ['Técnica (Alzapúa)', 'Falsetas', 'Acompañamiento al cante'],
+        ejerciciosPrioritarios: ['SOL_ALZ_01', 'SOL_FAL_01', 'SOL_CANTE_01', 'SOL_CREA_01'],
+        pruebaSemanal: 'Enlazar 1 compás de paseo + 1 compás de Falseta de Pulgar + Cierre en el 10 a 74 BPM sin parones.'
+      },
+      {
+        semana: 3,
+        tipo: 'Desarrollo Progresivo',
+        objetivoPrincipal: 'Integrar Arpegio Doble, Picado de remate (7-8-9-10) y superar la prueba del Compás Mudo (7-8-9 silenciados).',
+        objetivosSecundarios: [
+          'Equilibrar el volumen entre el cantabile del pulgar en bordones y el arpegio i-m-a en primas.',
+          'Ejecutar remates de picado apoyado sin tensar el hombro derecho.',
+          'Desplazar un motivo propio para empezar a contratiempo tras el tiempo 12.'
+        ],
+        competenciasEntrenadas: ['Técnica (Arpegio y Picado)', 'Compás (Contratiempos)', 'Musicalidad'],
+        ejerciciosPrioritarios: ['SOL_ARP_01', 'SOL_PIC_01', 'SOL_FAL_02', 'SOL_CREA_02'],
+        pruebaSemanal: 'Superar 4 ciclos con el modo "Silenciar 7-8-9" activo en el Reloj Flamenco clavando el golpe del 10.'
+      },
+      {
+        semana: 4,
+        tipo: 'Consolidación y Evaluación (Carga Adaptable)',
+        objetivoPrincipal: 'Ensamblar una pieza corta completa por Soleá (Salida + Falseta 1 + Letra de Cante + Falseta 2 + Cierre) con dinámica.',
+        objetivosSecundarios: [
+          'Unificar los cambios de técnica (de rasgueo a pulgar y de arpegio a picado) sin alterar el BPM.',
+          'Autoevaluar las 6 competencias del bloque con grabación propia en el móvil.',
+          'Preparar el informe de exportación quincenal.'
+        ],
+        competenciasEntrenadas: ['Compás', 'Técnica', 'Falsetas', 'Acompañamiento', 'Composición', 'Musicalidad'],
+        ejerciciosPrioritarios: ['SOL_COMP_01', 'SOL_FAL_01', 'SOL_FAL_02', 'SOL_CANTE_01'],
+        pruebaSemanal: 'Prueba de superación de Etapa 1: Interpretación continua de 4 ciclos completos a 78-80 BPM.'
+      }
+    ];
+
+    /* BANCO DE EJERCICIOS CON LOS 11 CAMPOS OBLIGATORIOS */
+    const BANCO_EJERCICIOS = [
+      {
+        id: 'SOL_CAL_01',
+        nombre: 'Despertar Mecánico: Pulgar Apoyado y Ligados en Frigio',
+        duracionBase: 5,
+        palo: 'Soleá',
+        semanaRecomendada: 1,
+        categoria: 'calentamiento',
+        aptoCansado: true,
+        tecnicaCompetencia: 'Técnica · Pulgar apoyado y Ligados de mano izquierda',
+        instrucciones: 'Con el Reloj a 60 BPM, toca una nota por tiempo con el pulgar (p) apoyando siempre en la cuerda inferior inmediata (descansando en la 5ª al tocar la 6ª). En los tiempos 3, 6, 8 y 10 ejecuta un ligado ascendente-descendente (0-1-0 en 6ª cuerda, Mi-Fa-Mi) dejando caer el peso del brazo.',
+        tablatura:
+`Tiempo: [12]   1    2   [3]    4    5   [6]    7   [8]    9  [10]   11
+e|----------------------------------------------------------------------|
+B|----------------------------------------------------------------------|
+G|----------------------------------------------------------------------|
+D|----------------------------------------------------------------------|
+A|--------2----2----2---------0----0---------3----2---------2-----------|
+E|---0h1-----------------0h1p0----------1h3-----------0h1p0---0----(0)--|
+     p                   p              p             p       p`,
+        objetivoTecnico: 'Fijar el ataque apoyado del pulgar flamenco (distinto al ataque oblicuo de púa) y activar la percusión de la yema izquierda.',
+        objetivoMusical: 'Conectar físicamente el peso del pulgar con los tiempos acentuados del reloj (12, 3, 6, 8, 10).',
+        criterioExito: 'Completar 4 ciclos a 60 BPM donde el pulgar descanse siempre en la cuerda vecina sin que la mano derecha bote hacia fuera.',
+        erroresFrecuentes: 'Tirar del pulgar hacia afuera como si fuera un pellizco de guitarra acústica o tensar el trapecio derecho.',
+        correccionRecomendada: 'Coloca los dedos i-m-a suavemente apoyados sobre la prima (1ª cuerda) como ancla mientras el pulgar trabaja en los bordones.',
+        ajusteDificultad: 'Reducir: Hacer solo pulgar sin ligados en cuerdas al aire. Aumentar: Doblar a corcheas en los tiempos 7, 8 y 9 antes de clavar el 10.'
+      },
+      {
+        id: 'SOL_COMP_01',
+        nombre: 'El Reloj de la Soleá: Paseo Tradicional y Cierre en el 10',
+        duracionBase: 7,
+        palo: 'Soleá',
+        semanaRecomendada: 1,
+        categoria: 'compas',
+        aptoCansado: true,
+        tecnicaCompetencia: 'Compás · Interiorización de Llamada en el 3 y Cierre en el 10',
+        instrucciones: 'Establece el ciclo por arriba (Mi frigio). En los tiempos 12-1-2 marca el acorde de Fa mayor (o Fa maj7) con rasgueo desgranado (a-m-i) y resuelve en el [3] a Mi mayor con golpe en tapa. Del 4 al 6 camina por Am -> G -> F, y en 7-[8]-9-[10] ejecuta el cierre clásico clavando el acorde de Mi en el tiempo 10. En el 11 y 12 deja respirar o mete el bordón de adorno.',
+        tablatura:
+`Tiempo: [12]  1   2  [3]   4   5  [6]   7  [8]   9  [10]  11
+Acorde:  F    F   F   E    Am  G   F    F   E   Dm7  E   (aire)
+e|-------1----1---1---0----0---3---1----1---0----1---0---------|
+B|-------1----1---1---0----1---0---1----1---0----1---0---------|
+G|-------2----2---2---1----2---0---2----2---1----2---1---------|
+D|-------3----3---3---2----2---0---3----3---2----0---2----2h3--|
+A|-------3----3---3---2----0---2---3----3---2--------2----0----|
+E|-------1----1---1---0--------3---1----1---0--------0---------|
+                      ^Golpe                         ^CIERRE`,
+        objetivoTecnico: 'Coordinar el rasgueo desgranado (a-m-i) con el golpe de anular en la tapa armónica en los tiempos 3, 6, 8 y 10.',
+        objetivoMusical: 'Sentir que el compás "descansa" en el 10 y que los tiempos 11-12 son el trampolín hacia el siguiente ciclo.',
+        criterioExito: 'Ejecutar 3 ciclos consecutivos a 72 BPM con el modo "Silenciar 7-8-9" activado, cayendo exactamente con el reloj en el tiempo 10.',
+        erroresFrecuentes: 'Acelerar los tiempos 7, 8 y 9 por ansiedad de llegar al cierre del 10 (comerle terreno al compás).',
+        correccionRecomendada: 'Siente el tiempo 8 hacia atrás (pesado en el acorde de Mi) y respira en el 9 antes de descargar la mano en el 10.',
+        ajusteDificultad: 'Reducir: Tocar un solo golpe hacia abajo por tiempo marcando fuerte 12, 3, 6, 8, 10. Aumentar: Meter remate de alzapúa en los tiempos 10-11-12.'
+      },
+      {
+        id: 'SOL_PUL_01',
+        nombre: 'Control de Pulgar: Motivo en Bordones y Tres Cierres Consecutivos',
+        duracionBase: 8,
+        palo: 'Soleá',
+        semanaRecomendada: 1,
+        categoria: 'tecnica',
+        aptoCansado: false,
+        tecnicaCompetencia: 'Técnica · Pulgar con contestación de índice y precisión en el 10',
+        instrucciones: 'Ejecuta el motivo melódico de pulgar en los bordones (6ª, 5ª y 4ª cuerda) respondiendo a contratiempo con el índice (i) tirando en la 1ª cuerda al aire (efecto pedal en Mi). Al llegar al tiempo 7, inicia la bajada frigia hacia el cierre en el 10.',
+        tablatura:
+`Tiempo: [12] &  1 &  2 & [3] &  4 &  5 & [6] &  7  [8]  9 [10]  11
+e|--------0-----0----0----0-----0----0----0-----------------0-------|
+B|----------------------------------------------------------0-------|
+G|----------------------------------------------------------1-------|
+D|------3------2----0-----------------------0---3---2---0---2-------|
+A|-----------------------3-----2----0-----------------------2-------|
+E|---------------------------------------3------------------0-------|
+        p i    p i  p i  p i   p i  p i  p i    p   p   p   ^Cierre`,
+        objetivoTecnico: 'Independizar el ataque pesado hacia abajo del pulgar (p) respecto al pellizco ligero hacia arriba del índice (i).',
+        objetivoMusical: 'Mantener un discurso de bordón flamenco constante sin que el pedal de prima suene más fuerte que la melodía grave.',
+        criterioExito: 'Encadenar 3 ciclos completos a 74 BPM sin que el índice se enganche en la prima y cerrando limpio en el 10.',
+        erroresFrecuentes: 'Dar el mismo volumen al índice que al pulgar (convirtiendo el ejercicio en algo mecánico sin relieve melódico).',
+        correccionRecomendada: 'Piensa que el pulgar "canta" (forte) y el índice es un eco lejano (piano).',
+        ajusteDificultad: 'Reducir: Suprimir la respuesta del índice y tocar solo la línea de pulgar. Aumentar: Subir a 84 BPM y añadir ligado en el tiempo 9.'
+      },
+      {
+        id: 'SOL_ALZ_01',
+        nombre: 'Mecánica de Alzapúa por Arriba (Cadencia Andaluza)',
+        duracionBase: 8,
+        palo: 'Soleá',
+        semanaRecomendada: 2,
+        categoria: 'tecnica',
+        aptoCansado: false,
+        tecnicaCompetencia: 'Técnica · Alzapúa (Giro de muñeca p↓ - p↑ - ligado/golpe)',
+        instrucciones: 'Trabaja el célula ternaria de alzapúa con giro de antebrazo (como al girar el pomo de una puerta, nunca doblando la falange del pulgar): 1) Pulgar abajo apoyado en la quinta/cuarta cuerda, 2) Pulgar arriba rozando las cuerdas agudas del acorde, 3) Ligado ascendente en bordón + golpe de anular en tapa.',
+        tablatura:
+`Célula de Alzapúa sobre Am -> G -> F -> E (Tiempos 12 al 10):
+Tiempo: [12]      1       2      [3]      4       5      [6]    7-[8]-9-[10]
+e|--------0-------0-------0-------3-------3-------1-------1--------------0--|
+B|--------1-------1-------1-------0-------0-------1-------1--------------0--|
+G|--------2-------2-------2-------0-------0-------2-------2--------------1--|
+D|------0h2-----0h2-----0h2-----0h2-----0h2-----0h3-----0h3----3--2--0---2--|
+A|----0-------0-------0--------------------------------------------------2--|
+E|----------------------------3-------3-------1-------1------------------0--|
+      p   p↑  p   p↑  p   p↑  p   p↑  p   p↑  p   p↑  p   p↑   p  p  p  [10]`,
+        objetivoTecnico: 'Generar el movimiento desde la rotación radiocubital del antebrazo manteniendo el pulgar firme como una púa natural.',
+        objetivoMusical: 'Conseguir el empuje percusivo característico de la escuela tradicional de Soleá.',
+        criterioExito: 'Mantener 2 ciclos seguidos de alzapúa a 70 BPM con sonido lleno tanto a la bajada como a la subida de uña.',
+        erroresFrecuentes: 'Articular la falange del pulgar en lugar de girar la muñeca, perdiendo potencia y atascándose en las cuerdas.',
+        correccionRecomendada: 'Bloquea ligeramente el ángulo del pulgar respecto al índice (como si sujetaras una moneda grande pero dejando el pulgar libre) y gira toda la muñeca.',
+        ajusteDificultad: 'Reducir: Practicar la célula sobre un único acorde (Mi frigio) a 58 BPM. Aumentar: Desplazar el acento del ligado cada 3 semicorcheas.'
+      },
+      {
+        id: 'SOL_FAL_01',
+        nombre: 'Falseta Tradicional 1: Cantabile de Pulgar y Arpegio (Estilo Alcalá)',
+        duracionBase: 8,
+        palo: 'Soleá',
+        semanaRecomendada: 2,
+        categoria: 'falseta',
+        aptoCansado: true,
+        tecnicaCompetencia: 'Falsetas · Fraseo en 12 tiempos y resolución en el 10',
+        instrucciones: 'Estudia esta falseta tradicional dividida en 2 bloques: Bloque A (tiempos 12 al 6) donde el pulgar canta en la 4ª cuerda mientras i-m-a contestan con arpegio inverso; Bloque B (tiempos 7 al 10) con caída hacia el bordón de Mi en el tiempo 10.',
+        tablatura:
+`Tiempo: [12]      1       2      [3]      4       5      [6]    7   [8]   9  [10]
+e|----------0-------0-------0-------0-------0-------0--------------------------0--|
+B|--------1---1---0---0-----------1---1---0---0--------------------------------0--|
+G|------2-------0-------2-------2-------0-------2------------------------------1--|
+D|----3-----------------------2-----------------------3---2----0--------------2--|
+A|-----------------------------------------------------------------3----2--0---2--|
+E|-----------------------------------------------------------------------------0--|
+      p i m a m i p...        p i m a m i p...        p   p    p   p    p  p  [10]`,
+        objetivoTecnico: 'Separar los planos dinámicos: melodía en 4ª cuerda (pulgar apoyado) al 80% de volumen y arpegio en 3ª-2ª-1ª al 40%.',
+        objetivoMusical: 'Darle aire cantable (rubato controlado dentro del pulso) sin perder el aterrizaje en el tiempo 10.',
+        criterioExito: 'Tocar la falseta completa de memoria enlazándola con un compás de paseo previo y posterior a 74 BPM.',
+        erroresFrecuentes: 'Correr en el arpegio (tiempos 1 y 4) porque los dedos i-m-a van más sueltos que el pulgar.',
+        correccionRecomendada: 'Canta en voz baja la línea de la 4ª cuerda (Fa - Mi - Re - Mi - Re - Do - Fa - Mi) mientras la tocas.',
+        ajusteDificultad: 'Reducir: Estudiar solo los tiempos 12 al 3 en bucle. Aumentar: Sustituir el final (7-8-9) por un picado en la primera posición.'
+      },
+      {
+        id: 'SOL_ARP_01',
+        nombre: 'Arpegio Doble con Melodía Oculta en el Bordón',
+        duracionBase: 6,
+        palo: 'Soleá',
+        semanaRecomendada: 3,
+        categoria: 'tecnica',
+        aptoCansado: true,
+        tecnicaCompetencia: 'Técnica · Arpegio doble (p - i - m - a - m - i)',
+        instrucciones: 'Mantén los dedos i-m-a colocados sobre 3ª, 2ª y 1ª cuerda antes de disparar (plantado secuencial). El pulgar dibuja la escala frigia en 6ª y 5ª cuerda marcando cada tiempo del reloj.',
+        tablatura:
+`Patrón por cada tiempo: p (apoyado) + i - m - a - m - i (tirado limpio)
+Tiempo: [12]     1      2     [3]     4      5     [6]    7   [8]   9  [10]
+Bajo:   6ª(0)  6ª(1)  6ª(3)  5ª(0)  5ª(2)  5ª(3)  5ª(2)  5ª(0) 6ª(3) 6ª(1) 6ª(0)`,
+        objetivoTecnico: 'Conseguir igualdad tímbrica entre el dedo anular (a) y el medio (m) sin que la mano derecha salte.',
+        objetivoMusical: 'Crear una textura continua hipnótica sobre la que el bajo camina hacia el cierre.',
+        criterioExito: 'Ejecutar 2 ciclos a 70 BPM sin rozar cuerdas equivocadas ni interrumpir el flujo en los cambios de cuerda del pulgar.',
+        erroresFrecuentes: 'Levantar el meñique derecho en tensión o tirar de la mano hacia el puente al usar el anular.',
+        correccionRecomendada: 'Lleva la punta de los dedos hacia la palma de la mano conservando la muñeca estable.',
+        ajusteDificultad: 'Reducir: Arpegio simple de 4 notas (p - i - m - a). Aumentar: Subir a 82 BPM acentuando el dedo anular.'
+      },
+      {
+        id: 'SOL_PIC_01',
+        nombre: 'Picado de Remate en Tiempos 7-8-9-10 (Sin Tensión)',
+        duracionBase: 6,
+        palo: 'Soleá',
+        semanaRecomendada: 3,
+        categoria: 'tecnica',
+        aptoCansado: false,
+        tecnicaCompetencia: 'Técnica · Picado apoyado (i - m alternados estrictos)',
+        instrucciones: 'Mantén compás de paseo en los tiempos 12 al 6. Exactamente en el tiempo 7, apoya el pulgar en la 6ª cuerda como soporte y lanza una escala frigia descendente en picado apoyado (i-m) para clavar la nota Mi o el acorde en el tiempo 10.',
+        tablatura:
+`Tiempos 12 al 6: Paseo de Soleá
+Remate en 7 - [8] - 9 - [10]:
+Tiempo:   7         [8]         9        [10]
+e|--------5-3-1-0-----------------------------------|
+B|------------------3-1-0---------------------------|
+G|--------------------------2-1---------------------|
+D|------------------------------3-2-------2---------|
+A|----------------------------------------2---------|
+E|----------------------------------------0---------|
+          i m i m   i m i m i m i m       ^Cierre`,
+        objetivoTecnico: 'Alternancia estricta i-m sin repetir dedo en los cambios de cuerda y relajación inmediata en el tiempo 10.',
+        objetivoMusical: 'Usar el picado como descarga rítmica incisiva hacia el cierre, no como una carrera de velocidad.',
+        criterioExito: 'Clavar 4 remates seguidos a 74 BPM donde todas las notas suenen con el mismo peso y el acorde del 10 entre a plomo.',
+        erroresFrecuentes: 'Venir con memoria muscular de púa cerrando los dedos o tensando el antebrazo al cambiar de la 1ª a la 2ª cuerda.',
+        correccionRecomendada: 'En cuanto toques el cierre del 10, suelta conscientemente el hombro y deja la mano muerta durante el tiempo 11.',
+        ajusteDificultad: 'Reducir: Hacer el remate en corcheas (2 notas por tiempo) en lugar de semicorcheas. Aumentar: Empezar el picado en el tiempo 6 a contratiempo.'
+      },
+      {
+        id: 'SOL_FAL_02',
+        nombre: 'Falseta 2: Campanelas, Ligados y Remate al 10',
+        duracionBase: 8,
+        palo: 'Soleá',
+        semanaRecomendada: 3,
+        categoria: 'falseta',
+        aptoCansado: false,
+        tecnicaCompetencia: 'Falsetas · Sonoridad abierta (Campanelas) y control rítmico',
+        instrucciones: 'Combina notas pisadas en 3ª y 2ª cuerda con la 1ª cuerda al aire (efecto campanela) en los tiempos 12 al 6, y resuelve con ligados de mano izquierda en bordones del 7 al 10.',
+        tablatura:
+`Tiempo: [12]    1     2    [3]    4     5    [6]    7    [8]    9   [10]
+e|----------0-----------0-----------0-----------0---------------------0--|
+B|--------6---4-------3---1-------0-----------------------------------0--|
+G|------7-------5---4-------2---1-----2p1p0---------------------------1--|
+D|--------------------------------------------3---2h3p2p0-------------2--|
+A|--------------------------------------------------------3p2p0-------2--|
+E|--------------------------------------------------------------3p1-0-0--|`,
+        objetivoTecnico: 'Arquear bien la mano izquierda para no apagar la prima al aire mientras suenan las notas altas en 2ª y 3ª cuerda.',
+        objetivoMusical: 'Contrastar la dulzura lírica de las campanelas (12 al 6) con el pellizco seco de los ligados graves (7 al 10).',
+        criterioExito: 'Interpretar la falseta completa a 76 BPM conservando la resonancia de las cuerdas al aire.',
+        erroresFrecuentes: 'Rozar la 1ª cuerda con la yema del dedo anular izquierdo cortando el efecto de campanela.',
+        correccionRecomendada: 'Adelanta ligeramente la muñeca izquierda para que los dedos caigan perpendiculares al diapasón.',
+        ajusteDificultad: 'Reducir: Practicar por separado la subida de campanelas y el remate de ligados. Aumentar: Integrarla tras la Falseta 1 sin compás intermedio.'
+      },
+      {
+        id: 'SOL_CANTE_01',
+        nombre: 'Acompañamiento al Cante: Salida y Primer Tercio (Soleá de Alcalá)',
+        duracionBase: 7,
+        palo: 'Soleá',
+        semanaRecomendada: 2,
+        categoria: 'cante',
+        aptoCansado: true,
+        tecnicaCompetencia: 'Acompañamiento · Escucha, Silencios y Caída al Sexto Grado (Do)',
+        instrucciones: 'Simula (o acompaña sobre audio) la entrada del cantaor: En el tiempo 12 el cantaor lanza el primer tercio sobre Mi; tú guardas silencio o das un leve apoyo hasta que en el tiempo 3-4 la voz cae a Do mayor (sexto grado). Ahí contestas con un arpegio/alzapúa corto en Do -> Sol7 -> Do y preparas la vuelta a Fa -> Mi para cerrar con él en el 10.',
+        tablatura:
+`Estructura del Primer Tercio de Cante:
+[12] - 1 - 2 : Voz sale en Mi (Guitarra en silencio activo / colchón suave)
+[3] - 4 - 5  : Caída de la voz a DO MAYOR -> Contestación de guitarra en Do (x32010)
+[6] - 7 - [8]: Subida por FA MAYOR7 (133210) acompañando el quejío
+ 9 - [10]    : Resolución conjunta en MI FRIGIO (022100) + adornos en 11`,
+        objetivoTecnico: 'Controlar el volumen de mano derecha para no tapar la voz y ejecutar los adornos de contestación exactamente en los huecos respiratorios del cantaor.',
+        objetivoMusical: 'Aprender a callar cuando el cantaor dice la letra y responder cuando sostiene la nota o respira.',
+        criterioExito: 'Completar 3 vueltas de letra cantando mentalmente (o tarareando) el tercio y entrando en Do mayor en el tiempo 3 sin dudar.',
+        erroresFrecuentes: 'Seguir rasgueando fuerte durante todo el compás como si fuera una canción de rock.',
+        correccionRecomendada: 'En los tiempos 1 y 2 toca únicamente con la yema del pulgar muy suave o deja sonar el acorde anterior.',
+        ajusteDificultad: 'Reducir: Marcar únicamente los cambios armónicos con un acorde arpegiado en 12, 3, 6 y 10. Aumentar: Añadir contestación de picado corto en los tiempos 4 y 5.'
+      },
+      {
+        id: 'SOL_CREA_01',
+        nombre: 'Composición 1: El Motivo de 3 Notas y su Respuesta',
+        duracionBase: 4,
+        palo: 'Soleá',
+        semanaRecomendada: 1,
+        categoria: 'composicion',
+        aptoCansado: true,
+        tecnicaCompetencia: 'Composición · Lenguaje propio y diferencia Frase vs Ciclo',
+        instrucciones: 'Elige únicamente 3 notas de la escala frigia de Mi (ej. Mi - Fa - Sol o La - Sol - Fa). En los tiempos 12-1-2-[3] lanza una "Pregunta" rítmica con esas 3 notas terminando en Fa (tensión). En los tiempos 4-5-[6] responde con las mismas 3 notas en orden inverso resolviendo en Mi. Del 7 al 10 cierra por compás tradicional.',
+        tablatura:
+`Regla del ejercicio:
+- SE CONSERVA OBLIGATORIAMENTE: El ciclo de 12 tiempos, la sonoridad frigia y el cierre en el 10.
+- ES LIBRE: El ritmo interno de tus 3 notas entre el 12 y el 6.`,
+        objetivoTecnico: 'Desconectar el piloto automático de los dedos y tocar lo que escuchas internamente con pulgar apoyado.',
+        objetivoMusical: 'Comprender que con 3 notas bien colocadas a compás ya se construye flamenco auténtico.',
+        criterioExito: 'Crear y repetir 2 veces idénticas tu propio motivo de pregunta-respuesta cerrando en el 10.',
+        erroresFrecuentes: 'Intentar meter demasiadas notas rápidas y perder la noción de por qué tiempo va el reloj.',
+        correccionRecomendada: 'Usa silencios. Una nota larga en el tiempo 12 y dos notas cortas en el 2 tienen mucho más pellizco.',
+        ajusteDificultad: 'Reducir: Usar solo 2 notas (Mi y Fa) jugando exclusivamente con el ritmo. Aumentar: Desplazar la pregunta para que empiece en el tiempo 1 a contratiempo.'
+      },
+      {
+        id: 'SOL_CREA_02',
+        nombre: 'Composición 2: Desplazamiento de Acentos y Anticipación del 10',
+        duracionBase: 5,
+        palo: 'Soleá',
+        semanaRecomendada: 3,
+        categoria: 'composicion',
+        aptoCansado: true,
+        tecnicaCompetencia: 'Composición · Desplazamiento rítmico y cierre anticipado',
+        instrucciones: 'Toma una frase corta de 3 tiempos que ya conozcas. Tocala empezando en el tiempo 12, repítela empezando en el tiempo 4 (desplazada un tiempo respecto al acento del 3) y resuelve anticipando el acorde de Mi en la segunda mitad del tiempo 9 (síncopa hacia el 10).',
+        tablatura:
+`Esquema de Desplazamiento:
+Frase A: [12] - 1 - 2 (Resuelve en [3])
+Frase A desplazada: 4 - 5 - [6] (Resuelve en 7)
+Cierre anticipado: 8 - 9& (Acorde de Mi ligado al [10] en silencio)`,
+        objetivoTecnico: 'Controlar el apagado de mano derecha e izquierda tras anticipar el cierre en el 9 y medio.',
+        objetivoMusical: 'Romper la previsibilidad métrica creando tensión flamenca moderna sin salirte de los 12 tiempos.',
+        criterioExito: 'Ejecutar el desplazamiento y el cierre anticipado en 9& dejando el tiempo 10 en silencio seco y volviendo a entrar en el 12 exacto.',
+        erroresFrecuentes: 'Al anticipar en el 9&, perder la referencia del tiempo 11 y entrar antes de tiempo en el siguiente 12.',
+        correccionRecomendada: 'En el tiempo 10 (que está en silencio sonoro), da un toque mudo con la yema del anular en la madera para sentir el suelo.',
+        ajusteDificultad: 'Reducir: Hacer el cierre normal a tierra en el 10. Aumentar: Construir una falseta completa de 2 ciclos uniendo SOL_CREA_01 y SOL_CREA_02.'
+      },
+      {
+        id: 'TAN_REP_01',
+        nombre: 'Semilla de Repaso: Soniquete Binario por Tangos (Cierre en el 3)',
+        duracionBase: 5,
+        palo: 'Tangos',
+        semanaRecomendada: 2,
+        categoria: 'repaso',
+        aptoCansado: true,
+        tecnicaCompetencia: 'Compás · Pulso binario y contraste con los 12 tiempos',
+        instrucciones: 'Cambia el Reloj Flamenco al modo "Tangos (4 tiempos)". Practica el patrón por Medio (La frigio: Bb - A) clavando el remate seco en el tiempo 3 y dejando el tiempo 4 en silencio o con pellizco de pulgar para contrastar con el ciclo de Soleá.',
+        tablatura:
+`Tiempo (4/4 Flamenco):  1      2     [3]    (4)
+Acorde (Por Medio):     Bb     Bb     A    (silencio / golpe)
+Acento principal: Clavado en el tiempo [3]`,
+        objetivoTecnico: 'Golpe simultáneo de anular en tapa + índice hacia abajo en acordes por medio.',
+        objetivoMusical: 'Limpiar la mente del ciclo de 12 tiempos y sentir la tierra binaria.',
+        criterioExito: 'Mantener 2 minutos de soniquete estable a 105 BPM respetando el aire del tiempo 4.',
+        erroresFrecuentes: 'Llenar el tiempo 4 de rasgueos quitándole el caminar flamenco.',
+        correccionRecomendada: 'Apaga las cuerdas con el canto de la mano derecha justo después del golpe del tiempo 3.',
+        ajusteDificultad: 'Reducir: Solo marcar 1, 2, [3]. Aumentar: Meter remate de ligados en 1-2-[3].'
+      }
+    ];
+
+    const LABS_COMPOSICION = [
+      {
+        paso: 1,
+        titulo: 'Motivo Celular de 3 Notas',
+        conserva: 'Ciclo de 12 tiempos, cadencia frigia (Mi-Fa-Sol) y aterrizaje en el 10.',
+        modifica: 'Duración de las notas y silencios entre el tiempo 12 y el 3.',
+        consigna: 'Prohibido hacer escalas largas. Crea una célula de 3 notas que puedas cantar antes de tocar.'
+      },
+      {
+        paso: 2,
+        titulo: 'Pregunta (Tensión en Fa) y Respuesta (Reposo en Mi)',
+        conserva: 'El motivo rítmico creado en el Paso 1.',
+        modifica: 'La nota final de cada semifrase: en el tiempo 3 descansa sobre Fa o Sol; en el tiempo 6 o 10 resuelve en Mi.',
+        consigna: 'Construye un diálogo donde la primera mitad del compás abre una interrogación y la segunda la contesta.'
+      },
+      {
+        paso: 3,
+        titulo: 'Desplazamiento Rítmico (Frase vs Ciclo)',
+        conserva: 'Las notas exactas de tu motivo.',
+        modifica: 'El tiempo del reloj en el que atacas la primera nota (ej. en vez de atacar en el 12, entra en el 1 o en el 12 y medio).',
+        consigna: 'Observa cómo la misma frase cambia de carácter al chocar de forma distinta contra los acentos 3 y 6.'
+      },
+      {
+        paso: 4,
+        titulo: 'Falseta Completa de 2 Ciclos con Remate',
+        conserva: 'Estructura de 24 tiempos (2 vueltas de reloj) y cierre definitivo en el segundo tiempo 10.',
+        modifica: 'En el primer tiempo 10 no cierres en seco: haz un puente melódico (enlazando 10-11-12) para que la falseta respire a 2 compases.',
+        consigna: 'Guarda tu creación en la pestaña Repertorio como "Propia" cuando puedas tocarla 3 veces igual.'
+      }
+    ];
+
+    const COMPETENCIAS_6_DEF = [
+      {
+        id: 'compas',
+        nombre: '1. Compás Flamenco',
+        niveles: [
+          'Inicial: Mantiene un patrón sencillo con apoyo visual/auditivo del reloj.',
+          'Funcional: Ejecuta cierres en el 10 y falsetas sencillas sin perder el ciclo.',
+          'Intermedio: Utiliza contratiempos, silencios (7-8-9 mudos) y anticipaciones con estabilidad.',
+          'Avanzado: Desarrolla frases libres y acompaña al cante adaptándose sin contar.'
+        ]
+      },
+      {
+        id: 'tecnica',
+        nombre: '2. Técnica Instrumental',
+        niveles: [
+          'Inicial: Conoce la mecánica de pulgar apoyado, rasgueo y alzapúa a tempo lento.',
+          'Funcional: Ejecuta pulgar, alzapúa y arpegios con limpieza y sin tensión de hombros.',
+          'Intermedio: Alterna técnicas (de rasgueo a picado/arpegio) manteniendo el peso y sonido.',
+          'Avanzado: Dominio completo de articulación, dinámica y timbre al servicio de la expresión.'
+        ]
+      },
+      {
+        id: 'falsetas',
+        nombre: '3. Interpretación de Falsetas',
+        niveles: [
+          'Inicial: Estudia falsetas por fragmentos aislados.',
+          'Funcional: Ejecuta las falsetas completas dentro del compás y entra/sale al paseo.',
+          'Intermedio: Memoriza repertorio y lo interpreta diferenciando planos dinámicos.',
+          'Avanzado: Integra falsetas con naturalidad y soniquete propio dentro de una pieza.'
+        ]
+      },
+      {
+        id: 'cante',
+        nombre: '4. Acompañamiento al Cante',
+        niveles: [
+          'Inicial: Reconoce auditivamente la salida y los cambios principales del tercio.',
+          'Funcional: Marca las cadencias (caída al sexto grado y cierre en el 10) a tiempo.',
+          'Intermedio: Controla los silencios y acompaña grabaciones reales sin tapar la voz.',
+          'Avanzado: Dialoga y contesta al cantaor en tiempo real según el estilo tradicional.'
+        ]
+      },
+      {
+        id: 'composicion',
+        nombre: '5. Composición y Lenguaje Propio',
+        niveles: [
+          'Inicial: Compone pequeños motivos de 3 notas dentro del ciclo.',
+          'Funcional: Crea preguntas-respuestas y varía motivos rítmicamente.',
+          'Intermedio: Desplaza acentos y construye falsetas propias de 1 o 2 ciclos.',
+          'Avanzado: Desarrolla piezas completas con coherencia estilística por distintos palos.'
+        ]
+      },
+      {
+        id: 'musicalidad',
+        nombre: '6. Musicalidad y Sonido',
+        niveles: [
+          'Inicial: Prioriza la limpieza de las notas sobre la velocidad.',
+          'Funcional: Separa el volumen del bordón (pulgar) respecto a las primas.',
+          'Intermedio: Aplica acentuación flamenca, silencios expresivos y control de timbre.',
+          'Avanzado: Discurso maduro con pellizco, respiración y peso flamenco.'
+        ]
+      }
+    ];
+
+    /*************************************************************************
+     * CAPA 2: ESTADO DEL ALUMNO Y PERSISTENCIA LOCAL
+     *************************************************************************/
+    let appState = null;
+    let pendingImportedPlan = null;
+
+    function getDefaultState() {
+      return {
+        version: '1.0',
+        paloActual: 'Soleá',
+        semanaActual: 1,
+        duracionPreferida: 30,
+        modoCansado: false,
+        bpmReloj: 76,
+        competencias: {
+          compas: 1,      // 0: Inicial, 1: Funcional, 2: Intermedio, 3: Avanzado
+          tecnica: 1,
+          falsetas: 0,
+          cante: 0,
+          composicion: 0,
+          musicalidad: 1
+        },
+        historialEjercicios: [], // Registros reales del alumno
+        repertorioFalsetas: [
+          {
+            id: 'DEMO_FAL_1',
+            esDemo: true,
+            palo: 'Soleá',
+            nombre: '[DEMO] Falseta Tradicional de Pulgar y Arpegio (Alcalá)',
+            autor: 'Tradicional / Escuela de Alcalá',
+            tecnica: 'Pulgar y Arpegio',
+            bpmActual: 68,
+            bpmObj: 80,
+            estado: 'En compás lento',
+            link: '',
+            obs: 'Cuidar que el pulgar en 4ª cuerda destaque sobre el arpegio i-m-a.'
+          }
+        ],
+        repertorioCante: [
+          {
+            id: 'DEMO_CAN_1',
+            esDemo: true,
+            estilo: '[DEMO] Soleá de Alcalá (Primer Tercio clásico)',
+            cantaor: 'Referencia de estudio tradicional',
+            tono: 'Por Arriba (Mi frigio) · Cejilla al 2 o 3 según voz',
+            dominio: 'Reconociendo tercios',
+            estructura: 'Salida en Mi (12-1-2) -> Caída a Do mayor en el [3] -> Subida a Fa maj7 en el [6] -> Cierre en Mi en el [10].'
+          }
+        ],
+        ajustesProfesor: null,
+        backupBeforeImport: null,
+        historialRevisiones: []
+      };
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          appState = Object.assign(getDefaultState(), JSON.parse(raw));
+        } else {
+          appState = getDefaultState();
+          saveState();
+        }
+      } catch (e) {
+        console.error('Error cargando estado local:', e);
+        appState = getDefaultState();
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {
+        console.error('Error guardando estado local:', e);
+      }
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toastMsg');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 2800);
+    }
+
+    /*************************************************************************
+     * CAPA 3: MOTOR PEDAGÓGICO LOCAL (GENERADOR INTELIGENTE DE SESIONES)
+     *************************************************************************/
+    let currentPrescription = null;
+
+    function generateDailyPrescription() {
+      const mins = Number(appState.duracionPreferida) || 30;
+      const cansado = Boolean(appState.modoCansado);
+      const semanaObj = PLAN_4_SEMANAS_SOLEA.find(w => w.semana === appState.semanaActual) || PLAN_4_SEMANAS_SOLEA[0];
+
+      // 1. Analizar registros recientes del alumno
+      const logs = appState.historialEjercicios || [];
+      const reforzarIds = new Set();
+      const noEntiendoIds = new Set();
+      const dominadosCount = {};
+
+      logs.slice(-25).forEach(log => {
+        if (log.resultado === 'reforzar') reforzarIds.add(log.ejercicioId);
+        if (log.resultado === 'no_entiendo') noEntiendoIds.add(log.ejercicioId);
+        if (log.resultado === 'conseguido' && log.dificultad <= 2) {
+          dominadosCount[log.ejercicioId] = (dominadosCount[log.ejercicioId] || 0) + 1;
+        }
+        if (log.resultado === 'conseguido') {
+          reforzarIds.delete(log.ejercicioId);
+        }
+      });
+
+      // Si el profesor importó ejercicios prioritarios, añadirlos a prioridad
+      if (appState.ajustesProfesor && Array.isArray(appState.ajustesProfesor.ejerciciosRepetir)) {
+        appState.ajustesProfesor.ejerciciosRepetir.forEach(id => reforzarIds.add(id));
+      }
+
+      // 2. Seleccionar ejercicios según bloques y duración (sin recortar todo a ciegas: se protege el núcleo)
+      let seleccionados = [];
+      let razonesMotor = [];
+
+      const findEx = (id) => BANCO_EJERCICIOS.find(e => e.id === id);
+
+      // Bloque Calentamiento
+      const exCal = findEx('SOL_CAL_01');
+      // Bloque Compás Nuclear (siempre presente)
+      const exCompas = findEx('SOL_COMP_01');
+
+      // Bloque Técnico (según semana, fatiga o refuerzo)
+      let exTecnica = findEx(appState.semanaActual === 1 ? 'SOL_PUL_01' : (appState.semanaActual === 2 ? 'SOL_ALZ_01' : 'SOL_PIC_01'));
+      if (cansado) {
+        exTecnica = findEx('SOL_ARP_01');
+        razonesMotor.push('Modo «Hoy estoy cansado» activo: se sustituye la carga de fuerza/velocidad por arpegio fluido y control sonoro sin perder compás.');
+      }
+
+      // Si hay alguno marcado como "Necesito reforzar", priorizarlo
+      if (reforzarIds.size > 0) {
+        const firstRefId = Array.from(reforzarIds)[0];
+        const refEx = findEx(firstRefId);
+        if (refEx && refEx.id !== exCompas.id) {
+          exTecnica = refEx;
+          razonesMotor.push(`Reprogramación automática: «${refEx.nombre}» reaparece hoy porque lo marcaste como "Necesito reforzar".`);
+        }
+      }
+
+      // Bloque Falseta / Cante
+      let exFalseta = findEx(appState.semanaActual >= 3 && !cansado ? 'SOL_FAL_02' : 'SOL_FAL_01');
+      let exCante = findEx('SOL_CANTE_01');
+
+      // Bloque Creativo
+      let exCrea = findEx(appState.semanaActual >= 3 ? 'SOL_CREA_02' : 'SOL_CREA_01');
+
+      // Distribución inteligente según minutos disponibles
+      if (mins === 10) {
+        // 10 min: Mantenimiento puro del núcleo (Compás + Técnica/Falseta clave)
+        seleccionados = [
+          { ex: exCompas, duracion: 5, motivo: 'Núcleo innegociable: mantener el reloj interno y el cierre en el 10.' },
+          { ex: exTecnica, duracion: 5, motivo: 'Trabajo técnico focalizado para sesión de mantenimiento de 10 min.' }
+        ];
+        razonesMotor.push('Sesión de 10 min (Mantenimiento): Se eliminan bloques accesorios para proteger al 100% el objetivo principal del día.');
+      } else if (mins === 15) {
+        seleccionados = [
+          { ex: exCal, duracion: 3, motivo: 'Activación rápida de ataque apoyado de pulgar.' },
+          { ex: exCompas, duracion: 6, motivo: 'Núcleo de compás y cierres en el 10.' },
+          { ex: exTecnica, duracion: 6, motivo: 'Objetivo técnico prioritario de la semana.' }
+        ];
+      } else if (mins === 20) {
+        seleccionados = [
+          { ex: exCal, duracion: 3, motivo: 'Calentamiento técnico consciente.' },
+          { ex: exTecnica, duracion: 7, motivo: 'Desarrollo mecánico dentro del compás.' },
+          { ex: exCompas, duracion: 5, motivo: 'Control de llamadas y cierres en el 10.' },
+          { ex: exFalseta, duracion: 5, motivo: 'Aplicación musical en falseta.' }
+        ];
+      } else if (mins === 30) {
+        // 30 min: Estándar exacto (5 + 8 + 7 + 7 + 3)
+        seleccionados = [
+          { ex: exCal, duracion: 5, motivo: '5 min: Calentamiento técnico y colocación de mano derecha.' },
+          { ex: exTecnica, duracion: 8, motivo: '8 min: Trabajo técnico prioritario del bloque.' },
+          { ex: exCompas, duracion: 7, motivo: '7 min: Compás, llamadas en el 3 y cierres en el 10.' },
+          { ex: exFalseta, duracion: 7, motivo: '7 min: Ejecución de falseta dentro del ciclo.' },
+          { ex: exCrea, duracion: 3, motivo: '3 min: Improvisación y lenguaje propio con cierre en el 10.' }
+        ];
+      } else if (mins === 45) {
+        seleccionados = [
+          { ex: exCal, duracion: 5, motivo: 'Calentamiento técnico y sonido apoyado.' },
+          { ex: exTecnica, duracion: 10, motivo: 'Profundización técnica.' },
+          { ex: exCompas, duracion: 8, motivo: 'Interiorización del reloj con silencios 7-8-9.' },
+          { ex: exFalseta, duracion: 10, motivo: 'Estudio y encadenamiento de falseta.' },
+          { ex: exCante, duracion: 7, motivo: 'Acompañamiento al primer tercio de cante por Soleá.' },
+          { ex: exCrea, duracion: 5, motivo: 'Composición de motivo y respuesta.' }
+        ];
+      } else {
+        // 60 min: Profundización + Semilla de repaso otro palo
+        const exRepaso = findEx('TAN_REP_01');
+        seleccionados = [
+          { ex: exCal, duracion: 6, motivo: 'Calentamiento progresivo de ambas manos.' },
+          { ex: exTecnica, duracion: 12, motivo: 'Trabajo técnico de fondo y limpieza.' },
+          { ex: exCompas, duracion: 10, motivo: 'Dominio del ciclo, llamadas y remates en el 10.' },
+          { ex: exFalseta, duracion: 12, motivo: 'Consolidación de repertorio de falsetas.' },
+          { ex: exCante, duracion: 8, motivo: 'Escucha activa y acompañamiento al cante.' },
+          { ex: exCrea, duracion: 6, motivo: 'Laboratorio de composición de falseta propia.' },
+          { ex: exRepaso, duracion: 6, motivo: 'Contraste rítmico: mantenimiento de pulso binario por Tangos.' }
+        ];
+      }
+
+      // Comprobar si algún ejercicio seleccionado está dominado para sugerir progresión
+      seleccionados.forEach(item => {
+        if (dominadosCount[item.ex.id] >= 2) {
+          item.sugerenciaProgresion = 'Has superado este ejercicio con facilidad en sesiones previas: hoy aplica la indicación de «Aumentar dificultad» (+4 BPM o modo Silencio 7-8-9).';
+        }
+        if (noEntiendoIds.has(item.ex.id)) {
+          item.alertaDuda = 'Marcaste este ejercicio como «No entiendo»: revisa el desglose paso a paso y queda señalado para tu exportación a ChatGPT.';
+        }
+      });
+
+      if (razonesMotor.length === 0) {
+        razonesMotor.push(`Planificación estándar (${mins} min) alineada con la Semana ${appState.semanaActual} de ${appState.paloActual}. Priorizando limpieza, peso en el pulgar y cierre en el 10.`);
+      }
+
+      if (appState.ajustesProfesor && appState.ajustesProfesor.recomendacionGeneral) {
+        razonesMotor.push(`Indicación activa del Profesor: «${appState.ajustesProfesor.recomendacionGeneral}»`);
+      }
+
+      const numSesion = (appState.historialEjercicios.length > 0)
+        ? Math.floor(appState.historialEjercicios.length / 3) + 1
+        : 1;
+
+      currentPrescription = {
+        numeroSesion: numSesion,
+        palo: appState.paloActual,
+        duracionTotal: mins,
+        titulo: `Sesión ${numSesion} — ${appState.paloActual}: ${exTecnica.nombre.split(':')[0]} y cierre en el tiempo 10`,
+        objetivoDia: `Mantener la estabilidad del ciclo de 12 tiempos (empezando en el 12) integrando ${exTecnica.tecnicaCompetencia.toLowerCase()} y ejecutar tres cierres consecutivos en el tiempo 10 sin perder la referencia rítmica.`,
+        razonMotor: razonesMotor.join(' '),
+        items: seleccionados
+      };
+
+      renderHoyView();
+    }
+
+    /*************************************************************************
+     * CAPA 4: RELOJ FLAMENCO UNIVERSAL Y WEB AUDIO API (EMPIEZA EN EL 12)
+     *************************************************************************/
+    let audioCtx = null;
+    let clockInterval = null;
+    let isClockPlaying = false;
+    let currentStepIndex = 0;
+    let silentTrapActive = false; // Silencia tiempos 7, 8, 9 para obligar a clavar el 10
+    let clockMode = 'solea';
+
+    // Secuencia universal empezando en el 12
+    const BEATS_12 = [
+      { num: 12, accent: true, role: 'Acento 12 (Inicio)' },
+      { num: 1,  accent: false, role: 'Camino' },
+      { num: 2,  accent: false, role: 'Camino' },
+      { num: 3,  accent: true, role: 'Semicierre / Llamada [3]' },
+      { num: 4,  accent: false, role: 'Empuje' },
+      { num: 5,  accent: false, role: 'Empuje' },
+      { num: 6,  accent: true, role: 'Acento Puente [6]' },
+      { num: 7,  accent: false, role: 'Bajada al cierre' },
+      { num: 8,  accent: true, role: 'Acento Tensión [8]' },
+      { num: 9,  accent: false, role: 'Antesala del cierre' },
+      { num: 10, accent: true, role: '¡CIERRE A TIERRA! [10]', isCierre: true },
+      { num: 11, accent: false, role: 'Aire / Adorno (11)' }
+    ];
+
+    const BEATS_4_TANGOS = [
+      { num: 1, accent: false, role: 'Entrada' },
+      { num: 2, accent: false, role: 'Camino' },
+      { num: 3, accent: true,  role: '¡CIERRE TANGOS! [3]', isCierre: true },
+      { num: 4, accent: false, role: 'Silencio / Pellizco (4)' }
+    ];
+
+    function buildClockFace() {
+      const container = document.getElementById('clockFace');
+      container.querySelectorAll('.beat-node').forEach(n => n.remove());
+
+      const beats = (clockMode === 'tangos') ? BEATS_4_TANGOS : BEATS_12;
+      const total = beats.length;
+      const radius = 92;
+      const centerX = 115;
+      const centerY = 115;
+
+      beats.forEach((b, idx) => {
+        const angleDeg = (idx * (360 / total)) - 90; // Índice 0 (12) arriba en las 12 en punto
+        const angleRad = angleDeg * (Math.PI / 180);
+        const x = centerX + radius * Math.cos(angleRad);
+        const y = centerY + radius * Math.sin(angleRad);
+
+        const el = document.createElement('div');
+        el.className = 'beat-node';
+        if (b.accent) el.classList.add('accent');
+        if (b.isCierre) el.classList.add('cierre-mark');
+        if (silentTrapActive && clockMode !== 'tangos' && (b.num === 7 || b.num === 8 || b.num === 9)) {
+          el.classList.add('muted-beat');
+        }
+        el.id = `clock-node-${idx}`;
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+        el.textContent = b.num;
+        container.appendChild(el);
+      });
+    }
+
+    function playFlamencoPercussion(beatObj) {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      // Si el modo Interiorización (Silenciar 7-8-9) está activo, callamos el audio en 7, 8, 9
+      if (silentTrapActive && clockMode !== 'tangos' && (beatObj.num === 7 || beatObj.num === 8 || beatObj.num === 9)) {
+        return;
+      }
+
+      const now = audioCtx.currentTime;
+
+      // Oscilador percusivo tipo madera/cajón
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      if (beatObj.isCierre) {
+        // Golpe rotundo de cierre en el 10 (o en el 3 en Tangos)
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(165, now);
+        osc.frequency.exponentialRampToValueAtTime(52, now + 0.11);
+        gain.gain.setValueAtTime(0.95, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.13);
+      } else if (beatObj.accent) {
+        // Acentos 12, 3, 6, 8
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(420, now);
+        osc.frequency.exponentialRampToValueAtTime(120, now + 0.08);
+        gain.gain.setValueAtTime(0.75, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+      } else {
+        // Tiempos débiles (palma sorda / nudillo suave)
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(820, now);
+        osc.frequency.exponentialRampToValueAtTime(290, now + 0.035);
+        gain.gain.setValueAtTime(0.28, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      }
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.14);
+    }
+
+    function tickClockStep() {
+      const beats = (clockMode === 'tangos') ? BEATS_4_TANGOS : BEATS_12;
+      const beatObj = beats[currentStepIndex];
+
+      document.querySelectorAll('.beat-node').forEach(n => n.classList.remove('active'));
+      const activeNode = document.getElementById(`clock-node-${currentStepIndex}`);
+      if (activeNode) activeNode.classList.add('active');
+
+      document.getElementById('clockCurrentNum').textContent = beatObj.num;
+      document.getElementById('clockCurrentRole').textContent = beatObj.role;
+
+      playFlamencoPercussion(beatObj);
+
+      currentStepIndex = (currentStepIndex + 1) % beats.length;
+    }
+
+    function toggleClock() {
+      const btn = document.getElementById('btnPlayClock');
+      if (isClockPlaying) {
+        clearInterval(clockInterval);
+        isClockPlaying = false;
+        btn.textContent = '▶ Iniciar Compás';
+        btn.classList.add('btn-primary');
+      } else {
+        currentStepIndex = 0;
+        isClockPlaying = true;
+        btn.textContent = '⏹ Detener Compás';
+        btn.classList.remove('btn-primary');
+        tickClockStep();
+        const intervalMs = (60 / appState.bpmReloj) * 1000;
+        clockInterval = setInterval(tickClockStep, intervalMs);
+      }
+    }
+
+    function updateBpm(val) {
+      appState.bpmReloj = Math.max(40, Math.min(200, Number(val)));
+      document.getElementById('bpmValLabel').textContent = appState.bpmReloj;
+      document.getElementById('bpmSlider').value = appState.bpmReloj;
+      saveState();
+      if (isClockPlaying) {
+        clearInterval(clockInterval);
+        const intervalMs = (60 / appState.bpmReloj) * 1000;
+        clockInterval = setInterval(tickClockStep, intervalMs);
+      }
+    }
+
+    function adjustBpm(delta) {
+      updateBpm(appState.bpmReloj + delta);
+    }
+
+    function changeClockMode(mode) {
+      clockMode = mode;
+      currentStepIndex = 0;
+      if (mode === 'buleria' && appState.bpmReloj < 105) {
+        updateBpm(120);
+      } else if (mode === 'solea' && appState.bpmReloj > 105) {
+        updateBpm(76);
+      }
+      buildClockFace();
+    }
+
+    function toggleSilentTrap() {
+      silentTrapActive = !silentTrapActive;
+      const btn = document.getElementById('btnMuteTrap');
+      btn.textContent = silentTrapActive ? 'Silenciar 7-8-9: ACTIVO' : 'Silenciar 7-8-9: OFF';
+      btn.style.borderColor = silentTrapActive ? 'var(--amber-light)' : 'var(--wood-border)';
+      btn.style.color = silentTrapActive ? 'var(--amber-light)' : 'var(--text-main)';
+      buildClockFace();
+    }
+
+    /*************************************************************************
+     * CAPA 5: TEMPORIZADORES POR EJERCICIO Y REGISTRO DE RESULTADOS
+     *************************************************************************/
+    const activeTimers = {};
+
+    function toggleExerciseTimer(exId, defaultMinutes) {
+      if (!activeTimers[exId]) {
+        activeTimers[exId] = {
+          remainingSec: defaultMinutes * 60,
+          elapsedSec: 0,
+          running: false,
+          interval: null
+        };
+      }
+
+      const t = activeTimers[exId];
+      const btn = document.getElementById(`btn-timer-${exId}`);
+
+      if (t.running) {
+        clearInterval(t.interval);
+        t.running = false;
+        if (btn) btn.textContent = '▶ Reanudar';
+      } else {
+        t.running = true;
+        if (btn) btn.textContent = '⏸ Pausar';
+        t.interval = setInterval(() => {
+          if (t.remainingSec > 0) {
+            t.remainingSec--;
+          }
+          t.elapsedSec++;
+          const disp = document.getElementById(`disp-timer-${exId}`);
+          if (disp) {
+            const m = Math.floor(t.remainingSec / 60).toString().padStart(2, '0');
+            const s = (t.remainingSec % 60).toString().padStart(2, '0');
+            disp.textContent = `${m}:${s}`;
+          }
+          // Actualizar input de minutos reales automáticamente
+          const inputRealMins = document.getElementById(`log-mins-${exId}`);
+          if (inputRealMins) {
+            inputRealMins.value = Math.max(1, Math.round(t.elapsedSec / 60));
+          }
+          if (t.remainingSec === 0) {
+            clearInterval(t.interval);
+            t.running = false;
+            if (btn) btn.textContent = '✓ Tiempo cumplido';
+            playFlamencoPercussion({ isCierre: true, num: 10 });
+          }
+        }, 1000);
+      }
+    }
+
+    function saveExerciseLog(exId, exNombre, palo, prescribedMins) {
+      const resultado = document.getElementById(`log-res-${exId}`).value;
+      const minutosReales = Number(document.getElementById(`log-mins-${exId}`).value) || prescribedMins;
+      const tempoUsado = Number(document.getElementById(`log-bpm-${exId}`).value) || appState.bpmReloj;
+      const dificultad = Number(document.getElementById(`log-dif-${exId}`).value) || 3;
+      const calidad = Number(document.getElementById(`log-cal-${exId}`).value) || 3;
+      const tension = document.getElementById(`log-ten-${exId}`).value;
+      const observaciones = document.getElementById(`log-obs-${exId}`).value.trim();
+      const preguntaProfesor = document.getElementById(`log-preg-${exId}`).value.trim();
+
+      const now = new Date();
+      const fechaISO = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+
+      const record = {
+        id: 'LOG_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6),
+        fecha: fechaISO,
+        timestamp: now.toISOString(),
+        ejercicioId: exId,
+        ejercicioNombre: exNombre,
+        palo: palo,
+        resultado: resultado, // conseguido, parcial, reforzar, no_entiendo, no_realizado
+        objetivoAlcanzado: (resultado === 'conseguido'),
+        minutosPrescritos: prescribedMins,
+        minutosReales: minutosReales,
+        tempo: tempoUsado,
+        dificultad: dificultad,
+        calidad: calidad,
+        tension: tension,
+        observaciones: observaciones,
+        preguntaProfesor: preguntaProfesor
+      };
+
+      appState.historialEjercicios.push(record);
+      saveState();
+
+      // Marcar visualmente la tarjeta
+      const card = document.getElementById(`card-ex-${exId}`);
+      if (card) {
+        card.className = `exercise-card done-${resultado}`;
+      }
+
+      const statusMsg = (resultado === 'conseguido')
+        ? '¡Objetivo superado y registrado!'
+        : (resultado === 'reforzar' ? 'Guardado: se reprogramará para refuerzo.' : 'Registro guardado en tu diario.');
+      showToast(statusMsg);
+      renderProgresoView();
+      renderRevisionView();
+    }
+
+    /*************************************************************************
+     * CAPA 6: RENDERIZADO DE INTERFAZ Y NAVEGACIÓN
+     *************************************************************************/
+    function renderPedagogicalChain() {
+      const semanaObj = PLAN_4_SEMANAS_SOLEA.find(w => w.semana === appState.semanaActual) || PLAN_4_SEMANAS_SOLEA[0];
+      const chainEl = document.getElementById('pedagogicalChain');
+      chainEl.innerHTML = `
+        <span class="chain-node"><strong>Hoy:</strong> Cierre en el 10 y control de pulgar</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-node"><strong>Semana ${semanaObj.semana}:</strong> ${semanaObj.tipo}</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-node"><strong>Mes 1:</strong> Bloque Soleá (4 sem.)</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-node"><strong>Competencia:</strong> Compás de 12 t. y Peso</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-node"><strong>Meta:</strong> Autonomía Flamenca</span>
+      `;
+    }
+
+    function renderHoyView() {
+      renderPedagogicalChain();
+      if (!currentPrescription) return;
+
+      // 1. Las 4 preguntas inmediatas
+      const qBox = document.getElementById('fourQuestionsBox');
+      const nombresEx = currentPrescription.items.map(i => `${i.ex.nombre.split(':')[0]} (${i.duracion}m)`).join(' + ');
+      qBox.innerHTML = `
+        <div class="q-box">
+          <div class="q-label">1. ¿Qué me toca hoy?</div>
+          <div class="q-val"><strong>${currentPrescription.palo}</strong> · ${currentPrescription.duracionTotal} min (${currentPrescription.items.length} bloques)</div>
+        </div>
+        <div class="q-box">
+          <div class="q-label">2. ¿Qué tengo que hacer exactamente?</div>
+          <div class="q-val">${nombresEx}</div>
+        </div>
+        <div class="q-box">
+          <div class="q-label">3. ¿Qué objetivo debo conseguir?</div>
+          <div class="q-val">Clavar el cierre en el tiempo <strong>10</strong> tres veces seguidas sin perder el reloj.</div>
+        </div>
+        <div class="q-box">
+          <div class="q-label">4. ¿Cómo registro el resultado?</div>
+          <div class="q-val">Usa el temporizador de cada bloque y pulsa <strong>«Guardar Registro»</strong> al pie del ejercicio.</div>
+        </div>
+      `;
+
+      // 2. Cabecera de la sesión
+      document.getElementById('sessionHeaderCode').textContent = `SESIÓN PRESCRITA · ${currentPrescription.duracionTotal} MINUTOS`;
+      document.getElementById('sessionMainTitle').textContent = currentPrescription.titulo;
+      document.getElementById('sessionGoalText').textContent = currentPrescription.objetivoDia;
+      document.getElementById('sessionEngineReason').innerHTML = `<strong>Criterio del Motor Pedagógico:</strong> ${currentPrescription.razonMotor}`;
+
+      // 3. Tarjetas de ejercicios con los 11 campos obligatorios
+      const listEl = document.getElementById('sessionExercisesList');
+      listEl.innerHTML = currentPrescription.items.map((item, idx) => {
+        const ex = item.ex;
+        const dur = item.duracion;
+        return `
+          <article class="exercise-card" id="card-ex-${ex.id}">
+            <div class="ex-top">
+              <div>
+                <div style="font-size:0.72rem; color:var(--amber-light); font-weight:700; text-transform:uppercase;">
+                  Bloque ${idx + 1} · ${item.motivo}
+                </div>
+                <h3 class="card-title" style="margin-top:2px;">1. ${ex.nombre}</h3>
+                <div class="ex-meta-badges">
+                  <span class="badge badge-amber">2. Duración: ${dur} min</span>
+                  <span class="badge">3. Palo: ${ex.palo}</span>
+                  <span class="badge">4. ${ex.tecnicaCompetencia}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="ex-body">
+              ${item.sugerenciaProgresion ? `<div class="pedagogical-why" style="border-color:var(--success); color:#6ee7b7;">⬆ ${item.sugerenciaProgresion}</div>` : ''}
+              ${item.alertaDuda ? `<div class="pedagogical-why" style="border-color:var(--info); color:#93c5fd;">ℹ ${item.alertaDuda}</div>` : ''}
+
+              <div class="detail-item" style="margin-bottom:8px;">
+                <strong>5. Instrucciones concretas de ejecución</strong>
+                ${ex.instrucciones}
+              </div>
+
+              <div class="ascii-tab">${ex.tablatura}</div>
+
+              <div class="criterion-box">
+                <strong>8. Criterio de Éxito Verificable (Objetivo vs Completar)</strong>
+                ${ex.criterioExito}
+              </div>
+
+              <div class="ex-grid-details">
+                <div class="detail-item">
+                  <strong>6. Objetivo Técnico</strong>
+                  ${ex.objetivoTecnico}
+                </div>
+                <div class="detail-item">
+                  <strong>7. Objetivo Musical</strong>
+                  ${ex.objetivoMusical}
+                </div>
+                <div class="detail-item">
+                  <strong>9. Errores Frecuentes</strong>
+                  ${ex.erroresFrecuentes}
+                </div>
+                <div class="detail-item">
+                  <strong>10. Corrección Recomendada del Profesor</strong>
+                  ${ex.correccionRecomendada}
+                </div>
+                <div class="detail-item">
+                  <strong>11. Cómo Reducir o Aumentar Dificultad</strong>
+                  ${ex.ajusteDificultad}
+                </div>
+              </div>
+
+              <!-- Temporizador integrado -->
+              <div class="timer-bar">
+                <div>
+                  <span style="font-size:0.72rem; color:var(--text-muted); display:block;">Temporizador del bloque</span>
+                  <span class="timer-display" id="disp-timer-${ex.id}">${String(dur).padStart(2, '0')}:00</span>
+                </div>
+                <div style="display:flex; gap:6px;">
+                  <button class="btn btn-primary btn-sm" id="btn-timer-${ex.id}" onclick="toggleExerciseTimer('${ex.id}', ${dur})">
+                    ▶ Iniciar ${dur}m
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel de registro del ejercicio -->
+            <div class="log-panel">
+              <details>
+                <summary>📝 Registrar Resultado y Sensaciones de este Ejercicio</summary>
+                <div style="margin-top:10px;">
+                  <div class="form-row">
+                    <div>
+                      <label>Resultado del Objetivo</label>
+                      <select id="log-res-${ex.id}">
+                        <option value="conseguido">✓ Conseguido (Criterio superado)</option>
+                        <option value="parcial">◐ Parcialmente conseguido</option>
+                        <option value="reforzar">↻ Necesito reforzar (Reprogramar)</option>
+                        <option value="no_entiendo">? No entiendo el ejercicio (Para revisión IA)</option>
+                        <option value="no_realizado">✕ No realizado hoy</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label>Minutos reales / Tempo (BPM)</label>
+                      <div style="display:flex; gap:6px;">
+                        <input type="number" id="log-mins-${ex.id}" value="${dur}" min="1" max="120" title="Minutos reales">
+                        <input type="number" id="log-bpm-${ex.id}" value="${appState.bpmReloj}" min="40" max="220" title="BPM utilizado">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div>
+                      <label>Dificultad percibida (1 muy fácil - 5 límite)</label>
+                      <select id="log-dif-${ex.id}">
+                        <option value="1">1 - Muy baja</option>
+                        <option value="2">2 - Controlada</option>
+                        <option value="3" selected>3 - Adecuada / Reto justo</option>
+                        <option value="4">4 - Exigente</option>
+                        <option value="5">5 - Muy alta</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label>Calidad de sonido y compás (1 a 5)</label>
+                      <select id="log-cal-${ex.id}">
+                        <option value="1">1 - Sucio / Fuera de compás</option>
+                        <option value="2">2 - Irregular</option>
+                        <option value="3" selected>3 - Limpio pero con esfuerzo</option>
+                        <option value="4">4 - Limpio y con peso en el 10</option>
+                        <option value="5">5 - Soniquete firme y relajado</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div style="margin-bottom:8px;">
+                    <label>Tensión física o molestias detectadas</label>
+                    <select id="log-ten-${ex.id}">
+                      <option value="Ninguna (Relajado)">Ninguna (Hombros y muñeca sueltos)</option>
+                      <option value="Tensión en antebrazo derecho">Tensión en antebrazo / muñeca derecha</option>
+                      <option value="Fatiga en cejilla / pulgar izquierdo">Fatiga en cejilla / pulgar izquierdo</option>
+                      <option value="Rigidez al llegar al cierre del 10">Rigidez al acelerar hacia el cierre del 10</option>
+                    </select>
+                  </div>
+
+                  <div class="form-row">
+                    <div>
+                      <label>Observaciones libres de hoy</label>
+                      <input type="text" id="log-obs-${ex.id}" placeholder="Ej. Mejoró el apoyo de pulgar en 4ª cuerda...">
+                    </div>
+                    <div>
+                      <label>Pregunta para el Profesor (Revisión ChatGPT)</label>
+                      <input type="text" id="log-preg-${ex.id}" placeholder="Ej. ¿Cómo evito rozar la prima en la alzapúa?">
+                    </div>
+                  </div>
+
+                  <button class="btn btn-primary btn-sm" style="width:100%;" onclick="saveExerciseLog('${ex.id}', '${ex.nombre.replace(/'/g, "\\'")}', '${ex.palo}', ${dur})">
+                    💾 Guardar Registro de este Ejercicio
+                  </button>
+                </div>
+              </details>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function toggleFatigueMode() {
+      appState.modoCansado = !appState.modoCansado;
+      const box = document.getElementById('fatigueToggle');
+      const badge = document.getElementById('fatigueStatusBadge');
+      if (appState.modoCansado) {
+        box.classList.add('active');
+        badge.textContent = 'Activado';
+        badge.className = 'badge badge-amber';
+      } else {
+        box.classList.remove('active');
+        badge.textContent = 'Desactivado';
+        badge.className = 'badge';
+      }
+      saveState();
+      generateDailyPrescription();
+    }
+
+    function regenerateDailySession(notify) {
+      generateDailyPrescription();
+      if (notify) showToast('Sesión recalculada');
+    }
+
+    function selectProgramWeek(weekNum) {
+      appState.semanaActual = weekNum;
+      saveState();
+      document.querySelectorAll('#weekSelector .pill-btn').forEach((b, idx) => {
+        b.classList.toggle('active', (idx + 1) === weekNum);
+      });
+      renderProgramaView();
+      generateDailyPrescription();
+    }
+
+    function renderProgramaView() {
+      const semanaObj = PLAN_4_SEMANAS_SOLEA.find(w => w.semana === appState.semanaActual) || PLAN_4_SEMANAS_SOLEA[0];
+      const weekBox = document.getElementById('weekPlanDetails');
+
+      weekBox.innerHTML = `
+        <div class="detail-item" style="margin-bottom:8px;">
+          <strong>Objetivo Principal de la Semana ${semanaObj.semana} (${semanaObj.tipo})</strong>
+          ${semanaObj.objetivoPrincipal}
+        </div>
+        <div class="detail-item" style="margin-bottom:8px;">
+          <strong>Objetivos Secundarios</strong>
+          <ul style="padding-left:18px; margin-top:4px;">
+            ${semanaObj.objetivosSecundarios.map(o => `<li>${o}</li>`).join('')}
+          </ul>
+        </div>
+        <div class="detail-item" style="margin-bottom:8px;">
+          <strong>Competencias Entrenadas</strong>
+          ${semanaObj.competenciasEntrenadas.join(' · ')}
+        </div>
+        <div class="criterion-box">
+          <strong>Prueba de Evaluación de fin de Semana ${semanaObj.semana}</strong>
+          ${semanaObj.pruebaSemanal}
+        </div>
+      `;
+
+      // Renderizar Laboratorio de Composición
+      const compEl = document.getElementById('compositionLabsList');
+      compEl.innerHTML = LABS_COMPOSICION.map(lab => `
+        <div class="detail-item" style="margin-bottom:10px;">
+          <strong>Paso ${lab.paso}: ${lab.titulo}</strong>
+          <p style="font-size:0.82rem; margin:4px 0;">${lab.consigna}</p>
+          <div style="font-size:0.75rem; color:var(--text-muted);">
+            <span style="color:#6ee7b7;">✔ Conservar del palo:</span> ${lab.conserva}<br>
+            <span style="color:var(--amber-light);">✎ Libertad creativa:</span> ${lab.modifica}
+          </div>
+        </div>
+      `).join('');
+
+      // Renderizar los 9 Palos
+      const palosEl = document.getElementById('itinerarioPalosList');
+      palosEl.innerHTML = ITINERARIO_9_PALOS.map(p => {
+        const isCurrent = (p.nombre === appState.paloActual);
+        return `
+          <details style="background:var(--bg-input); border:1px solid ${isCurrent ? 'var(--amber)' : 'var(--wood-border)'}; border-radius:6px; padding:8px 12px; margin-bottom:8px;" ${isCurrent ? 'open' : ''}>
+            <summary>
+              Etapa ${p.etapa}: ${p.nombre} — <span style="color:var(--text-muted); font-weight:400;">${p.foco}</span>
+              ${isCurrent ? '<span class="badge badge-amber" style="margin-left:6px;">Palo Activo</span>' : ''}
+            </summary>
+            <div style="font-size:0.8rem; margin-top:8px; display:grid; gap:6px;">
+              <div><strong style="color:var(--amber-light);">Objetivos Generales:</strong> ${p.objetivosGenerales}</div>
+              <div><strong style="color:var(--amber-light);">Objetivos Técnicos:</strong> ${p.objetivosTecnicos}</div>
+              <div><strong style="color:var(--amber-light);">Objetivos Rítmicos:</strong> ${p.objetivosRitmicos}</div>
+              <div><strong style="color:var(--amber-light);">Acompañamiento al Cante:</strong> ${p.objetivosCante}</div>
+              <div><strong style="color:var(--amber-light);">Repertorio y Creatividad:</strong> ${p.objetivosRepertorio} | ${p.objetivosCreativos}</div>
+              <div class="criterion-box" style="margin:4px 0;">
+                <strong>Prueba de Evaluación y Criterio de Superación</strong>
+                ${p.pruebaEvaluacion}<br><em>Criterio:</em> ${p.criteriosSuperacion}
+              </div>
+              ${!isCurrent ? `<button class="btn btn-sm" onclick="activatePalo('${p.nombre}')">Establecer ${p.nombre} como Palo Principal</button>` : ''}
+            </div>
+          </details>
+        `;
+      }).join('');
+    }
+
+    function activatePalo(nombrePalo) {
+      appState.paloActual = nombrePalo;
+      document.getElementById('headerPaloBadge').textContent = `Palo Activo · ${nombrePalo}`;
+      saveState();
+      renderProgramaView();
+      generateDailyPrescription();
+      showToast(`Palo principal actualizado a ${nombrePalo}`);
+    }
+
+    /*************************************************************************
+     * CAPA 7: REPERTORIO (FALSETAS Y ACOMPAÑAMIENTO AL CANTE)
+     *************************************************************************/
+    function toggleForm(id) {
+      const el = document.getElementById(id);
+      el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+    }
+
+    function saveNewFalseta() {
+      const nombre = document.getElementById('repFalsetaNombre').value.trim();
+      if (!nombre) {
+        showToast('Escribe un nombre para la falseta');
+        return;
+      }
+      const item = {
+        id: 'FAL_' + Date.now(),
+        esDemo: false,
+        palo: document.getElementById('repFalsetaPalo').value,
+        nombre: nombre,
+        autor: document.getElementById('repFalsetaAutor').value.trim() || 'Estudio personal',
+        tecnica: document.getElementById('repFalsetaTecnica').value,
+        bpmActual: Number(document.getElementById('repFalsetaBpmActual').value) || 65,
+        bpmObj: Number(document.getElementById('repFalsetaBpmObj').value) || 85,
+        estado: document.getElementById('repFalsetaEstado').value,
+        link: document.getElementById('repFalsetaLink').value.trim(),
+        obs: document.getElementById('repFalsetaObs').value.trim()
+      };
+      appState.repertorioFalsetas.unshift(item);
+      saveState();
+      document.getElementById('formNewFalseta').style.display = 'none';
+      renderRepertorioView();
+      showToast('Falseta añadida al repertorio');
+    }
+
+    function deleteFalseta(id) {
+      appState.repertorioFalsetas = appState.repertorioFalsetas.filter(f => f.id !== id);
+      saveState();
+      renderRepertorioView();
+    }
+
+    function saveNewCante() {
+      const estilo = document.getElementById('repCanteEstilo').value.trim();
+      if (!estilo) {
+        showToast('Indica el palo y variante de cante');
+        return;
+      }
+      const item = {
+        id: 'CAN_' + Date.now(),
+        esDemo: false,
+        estilo: estilo,
+        cantaor: document.getElementById('repCanteCantaor').value.trim() || 'Referencia tradicional',
+        tono: document.getElementById('repCanteTono').value.trim() || 'Por Arriba (Mi frigio)',
+        dominio: document.getElementById('repCanteDominio').value,
+        estructura: document.getElementById('repCanteEstructura').value.trim()
+      };
+      appState.repertorioCante.unshift(item);
+      saveState();
+      document.getElementById('formNewCante').style.display = 'none';
+      renderRepertorioView();
+      showToast('Ficha de cante guardada');
+    }
+
+    function deleteCante(id) {
+      appState.repertorioCante = appState.repertorioCante.filter(c => c.id !== id);
+      saveState();
+      renderRepertorioView();
+    }
+
+    function renderRepertorioView() {
+      const falList = document.getElementById('repertorioFalsetasList');
+      if (appState.repertorioFalsetas.length === 0) {
+        falList.innerHTML = `<p style="font-size:0.82rem; color:var(--text-muted);">No hay falsetas registradas todavía.</p>`;
+      } else {
+        falList.innerHTML = appState.repertorioFalsetas.map(f => `
+          <div class="detail-item" style="margin-bottom:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <strong>${f.palo} · ${f.tecnica} (${f.estado})</strong>
+                <div style="font-size:0.92rem; font-weight:700; color:var(--text-main);">${f.nombre}</div>
+              </div>
+              <button class="btn btn-sm" onclick="deleteFalseta('${f.id}')" title="Eliminar">✕</button>
+            </div>
+            <div style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">
+              Ref: ${f.autor} · Tempo actual: <strong>${f.bpmActual} BPM</strong> (Objetivo: ${f.bpmObj} BPM)
+              ${f.link ? ` · <a href="${f.link}" target="_blank" rel="noopener" style="color:var(--amber-light);">Abrir enlace</a>` : ''}
+            </div>
+            ${f.obs ? `<div style="font-size:0.78rem; margin-top:4px;"><em>Notas:</em> ${f.obs}</div>` : ''}
+          </div>
+        `).join('');
+      }
+
+      const canList = document.getElementById('repertorioCanteList');
+      if (appState.repertorioCante.length === 0) {
+        canList.innerHTML = `<p style="font-size:0.82rem; color:var(--text-muted);">No hay estilos de cante registrados.</p>`;
+      } else {
+        canList.innerHTML = appState.repertorioCante.map(c => `
+          <div class="detail-item" style="margin-bottom:8px;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div>
+                <strong>${c.tono} · ${c.dominio}</strong>
+                <div style="font-size:0.92rem; font-weight:700; color:var(--text-main);">${c.estilo}</div>
+              </div>
+              <button class="btn btn-sm" onclick="deleteCante('${c.id}')">✕</button>
+            </div>
+            <div style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">Referencia: ${c.cantaor}</div>
+            <div style="font-size:0.78rem; margin-top:4px;">${c.estructura}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    /*************************************************************************
+     * CAPA 8: PROGRESO, COMPETENCIAS Y DIARIO DE ENTRENAMIENTO
+     *************************************************************************/
+    function setCompetenciaLevel(compId, levelIdx) {
+      appState.competencias[compId] = levelIdx;
+      saveState();
+      renderProgresoView();
+      renderRevisionView();
+      showToast('Autoevaluación de competencia actualizada');
+    }
+
+    function renderProgresoView() {
+      // 1. Competencias (6 dimensiones)
+      const compBox = document.getElementById('competenciasEvalList');
+      const levelNames = ['Inicial', 'Funcional', 'Intermedio', 'Avanzado'];
+
+      compBox.innerHTML = COMPETENCIAS_6_DEF.map(c => {
+        const currentLvl = appState.competencias[c.id] || 0;
+        return `
+          <div class="comp-item">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong style="font-size:0.9rem; color:var(--amber-light);">${c.nombre}</strong>
+              <span class="badge badge-amber">Autoevaluación: ${levelNames[currentLvl]}</span>
+            </div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin-top:4px;">
+              <em>Criterio observable actual:</em> ${c.niveles[currentLvl]}
+            </p>
+            <div class="comp-level-pills">
+              ${levelNames.map((ln, idx) => `
+                <button class="lvl-btn ${idx === currentLvl ? 'active' : ''}" onclick="setCompetenciaLevel('${c.id}', ${idx})">
+                  ${ln}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 2. Estadísticas reales (sin simular progreso falso)
+      const logs = appState.historialEjercicios || [];
+      const totalMins = logs.reduce((acc, l) => acc + (Number(l.minutosReales) || 0), 0);
+      const conseguidos = logs.filter(l => l.resultado === 'conseguido').length;
+      const pendientesRefuerzo = logs.filter(l => l.resultado === 'reforzar' || l.resultado === 'no_entiendo').length;
+
+      document.getElementById('statsSummaryGrid').innerHTML = `
+        <div class="q-box">
+          <div class="q-label">Minutos Reales Acumulados</div>
+          <div class="q-val"><strong>${totalMins} min</strong> en ${logs.length} bloques registrados</div>
+        </div>
+        <div class="q-box">
+          <div class="q-label">Objetivos Superados vs Refuerzo</div>
+          <div class="q-val"><strong>${conseguidos}</strong> conseguidos · <strong>${pendientesRefuerzo}</strong> por reforzar</div>
+        </div>
+      `;
+
+      // 3. Calendario de 14 días (No punitivo)
+      const calEl = document.getElementById('calendarStrip14');
+      const practicedDates = new Set(logs.map(l => l.fecha));
+      const daysHtml = [];
+      const today = new Date();
+
+      for (let i = 13; i >= 0; i--) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        const iso = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+        const dayNum = d.getDate();
+        const monthShort = d.toLocaleDateString('es-ES', { month: 'short' }).replace('.', '');
+        const hasPractice = practicedDates.has(iso);
+        daysHtml.push(`
+          <div class="cal-day ${hasPractice ? 'practiced' : ''}" title="${iso}">
+            <div>${dayNum}</div>
+            <div style="font-size:0.6rem; opacity:0.8;">${monthShort}</div>
+          </div>
+        `);
+      }
+      calEl.innerHTML = daysHtml.join('');
+
+      // 4. Gráfico de evolución de Tempos (BPM)
+      const chartBox = document.getElementById('tempoChartBox');
+      const recentWithBpm = logs.filter(l => l.tempo > 0).slice(-8);
+      if (recentWithBpm.length === 0) {
+        chartBox.innerHTML = `<div style="margin:auto; font-size:0.78rem; color:var(--text-muted);">Registra tu primer ejercicio hoy para visualizar la evolución de tempos reales.</div>`;
+      } else {
+        chartBox.innerHTML = recentWithBpm.map(l => {
+          const pct = Math.min(100, Math.max(15, Math.round(((l.tempo - 40) / 120) * 100)));
+          return `
+            <div class="bar-col">
+              <div style="font-size:0.65rem; color:var(--amber-light); margin-bottom:2px;">${l.tempo}</div>
+              <div class="bar-fill" style="height:${pct}%;"></div>
+              <div class="bar-label">${l.fecha.slice(5)}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // 5. Dificultades recurrentes y dudas para ChatGPT
+      const issuesBox = document.getElementById('recurringIssuesBox');
+      const issuesLogs = logs.filter(l => l.resultado === 'reforzar' || l.resultado === 'no_entiendo' || l.preguntaProfesor);
+      if (issuesLogs.length === 0) {
+        issuesBox.innerHTML = `<p style="font-size:0.8rem; color:var(--text-muted);">No hay ejercicios marcados como «Necesito reforzar» ni dudas pendientes en este momento.</p>`;
+      } else {
+        issuesBox.innerHTML = issuesLogs.slice(-6).reverse().map(l => `
+          <div class="detail-item" style="margin-bottom:6px;">
+            <strong>${l.fecha} · ${l.ejercicioNombre} (${l.resultado.toUpperCase()})</strong>
+            ${l.observaciones ? `<div>Obs: ${l.observaciones}</div>` : ''}
+            ${l.preguntaProfesor ? `<div style="color:var(--amber-light);">Pregunta para revisión: «${l.preguntaProfesor}»</div>` : ''}
+          </div>
+        `).join('');
+      }
+
+      // 6. Historial de sesiones
+      const histBox = document.getElementById('historyLogsList');
+      if (logs.length === 0) {
+        histBox.innerHTML = `<p style="font-size:0.8rem; color:var(--text-muted);">Aún no has registrado ninguna sesión. Completa un bloque en la pestaña «1. Hoy».</p>`;
+      } else {
+        histBox.innerHTML = logs.slice().reverse().slice(0, 15).map(l => `
+          <div class="detail-item" style="margin-bottom:6px;">
+            <div style="display:flex; justify-content:space-between;">
+              <strong>${l.fecha} · ${l.palo} · ${l.ejercicioNombre}</strong>
+              <span class="badge">${l.resultado}</span>
+            </div>
+            <div style="font-size:0.76rem; color:var(--text-muted);">
+              Tiempo real: ${l.minutosReales}m · Tempo: ${l.tempo} BPM · Dificultad: ${l.dificultad}/5 · Calidad: ${l.calidad}/5 · Tensión: ${l.tension}
+            </div>
+            ${l.observaciones ? `<div style="font-size:0.78rem; margin-top:2px;">${l.observaciones}</div>` : ''}
+          </div>
+        `).join('');
+      }
+    }
+
+    /*************************************************************************
+     * CAPA 9: EXPORTACIÓN E IMPORTACIÓN QUINCENAL CON CHATGPT / IA
+     *************************************************************************/
+    function build15DayReviewPayload() {
+      const now = new Date();
+      const fifteenAgo = new Date();
+      fifteenAgo.setDate(now.getDate() - 15);
+
+      const endISO = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+      const startISO = new Date(fifteenAgo.getTime() - (fifteenAgo.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+
+      const logs15 = (appState.historialEjercicios || []).filter(l => l.fecha >= startISO && l.fecha <= endISO);
+      const semanaObj = PLAN_4_SEMANAS_SOLEA.find(w => w.semana === appState.semanaActual) || PLAN_4_SEMANAS_SOLEA[0];
+
+      const duracionRealTotal = logs15.reduce((acc, l) => acc + (Number(l.minutosReales) || 0), 0);
+      const sesionesUnicasFechas = Array.from(new Set(logs15.map(l => l.fecha)));
+
+      return {
+        app: 'EL CUARTO DEL TOQUE',
+        fechaInicioPeriodo: startISO,
+        fechaFinPeriodo: endISO,
+        paloPrincipal: appState.paloActual,
+        semanaActual: appState.semanaActual,
+        objetivosEstablecidos: {
+          principal: semanaObj.objetivoPrincipal,
+          secundarios: semanaObj.objetivosSecundarios
+        },
+        sesionesPlanificadasQuincena: 10,
+        sesionesRealizadas: sesionesUnicasFechas.length,
+        duracionRealTotalMinutos: duracionRealTotal,
+        ejerciciosYResultados: logs15,
+        temposRegistrados: logs15.map(l => ({ fecha: l.fecha, ejercicio: l.ejercicioId, bpm: l.tempo })),
+        dificultadesRecurrentes: logs15.filter(l => l.resultado === 'reforzar' || l.resultado === 'no_entiendo' || l.dificultad >= 4),
+        preguntasAlumnoParaProfesor: logs15.filter(l => l.preguntaProfesor).map(l => ({ ejercicio: l.ejercicioNombre, pregunta: l.preguntaProfesor })),
+        competenciasEvaluadas: appState.competencias,
+        objetivosCumplidos: logs15.filter(l => l.objetivoAlcanzado).map(l => l.ejercicioNombre),
+        objetivosPendientes: logs15.filter(l => !l.objetivoAlcanzado).map(l => l.ejercicioNombre),
+        historialRevisionesAnteriores: appState.historialRevisiones || []
+      };
+    }
+
+    function generateHumanReadableSummary(payload) {
+      return [
+        `=== INFORME QUINCENAL: EL CUARTO DEL TOQUE ===`,
+        `Periodo: ${payload.fechaInicioPeriodo} a ${payload.fechaFinPeriodo}`,
+        `Palo principal: ${payload.paloPrincipal} (Semana ${payload.semanaActual})`,
+        `Días entrenados en los últimos 15 días: ${payload.sesionesRealizadas} (${payload.duracionRealTotalMinutos} min totales)`,
+        `Bloques superados con éxito: ${payload.objetivosCumplidos.length} | Bloques por reforzar: ${payload.objetivosPendientes.length}`,
+        `Dudas anotadas para el profesor: ${payload.preguntasAlumnoParaProfesor.length}`,
+        ``,
+        `--- DATOS ESTRUCTURADOS JSON ---`,
+        JSON.stringify(payload, null, 2)
+      ].join('\n');
+    }
+
+    function renderRevisionView() {
+      const payload = build15DayReviewPayload();
+      const box = document.getElementById('exportHumanReportBox');
+      if (box) {
+        box.value = generateHumanReadableSummary(payload);
+      }
+      const btnRoll = document.getElementById('btnRollbackPlan');
+      if (btnRoll) {
+        btnRoll.style.display = appState.backupBeforeImport ? 'inline-flex' : 'none';
+      }
+    }
+
+    function exportReviewJSONFile() {
+      const payload = build15DayReviewPayload();
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `revision_cuarto_del_toque_${payload.fechaFinPeriodo}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Archivo JSON de revisión descargado');
+    }
+
+    function copyReviewWithMasterPrompt() {
+      const payload = build15DayReviewPayload();
+      const promptText = `Actúa como mi Profesor de Guitarra Flamenca en EL CUARTO DEL TOQUE. Analiza mi progreso de los últimos 15 días y devuélveme tu diagnóstico pedagógico junto con un bloque JSON válido que pueda importar directamente en mi aplicación siguiendo exactamente este esquema:
+{
+  "diagnosticoPeriodo": "Resumen claro de mis avances y puntos críticos",
+  "paloRecomendado": "Soleá",
+  "semanaRecomendada": ${appState.semanaActual},
+  "bpmRecomendado": ${appState.bpmReloj},
+  "objetivosQuincena": ["Objetivo 1", "Objetivo 2"],
+  "competenciasPrioritarias": ["Compás", "Técnica"],
+  "ejerciciosRepetir": ["SOL_COMP_01", "SOL_ALZ_01"],
+  "ejerciciosNuevos": [],
+  "recomendacionGeneral": "Consejo directo para el motor pedagógico diario"
+}
+
+Aquí están mis datos de los últimos 15 días:
+` + generateHumanReadableSummary(payload);
+
+      navigator.clipboard.writeText(promptText).then(() => {
+        showToast('Prompt Maestro + Informe JSON copiado al portapapeles');
+      }).catch(() => {
+        showToast('Selecciona el texto de la caja y cópialo manualmente');
+      });
+    }
+
+    function handleFileSelectReview(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('importJsonTextarea').value = e.target.result;
+        validateAndPreviewImport();
+      };
+      reader.readAsText(file);
+    }
+
+    function validateAndPreviewImport() {
+      const raw = document.getElementById('importJsonTextarea').value.trim();
+      if (!raw) {
+        showToast('Pega un JSON o selecciona un archivo primero');
+        return;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        if (!parsed.diagnosticoPeriodo || !Array.isArray(parsed.objetivosQuincena)) {
+          alert('El JSON no contiene los campos requeridos ("diagnosticoPeriodo" y array "objetivosQuincena").');
+          return;
+        }
+        pendingImportedPlan = parsed;
+        const prevBox = document.getElementById('importPreviewContainer');
+        const prevContent = document.getElementById('importPreviewContent');
+        prevBox.style.display = 'block';
+        prevContent.innerHTML = `
+          <div><strong>Diagnóstico del Profesor:</strong> ${parsed.diagnosticoPeriodo}</div>
+          <div style="margin-top:6px;"><strong>Objetivos próximos 15 días:</strong> ${parsed.objetivosQuincena.join(' · ')}</div>
+          <div style="margin-top:6px;"><strong>Palo / Semana / BPM ajustado:</strong> ${parsed.paloRecomendado || appState.paloActual} · Semana ${parsed.semanaRecomendada || appState.semanaActual} · ${parsed.bpmRecomendado || appState.bpmReloj} BPM</div>
+          <div style="margin-top:6px;"><strong>Recomendación activa:</strong> ${parsed.recomendacionGeneral || 'Sin cambios adicionales'}</div>
+        `;
+        showToast('JSON validado correctamente. Revisa la vista previa.');
+      } catch (e) {
+        alert('Error de formato JSON: asegúrate de copiar únicamente el bloque JSON válido.');
+      }
+    }
+
+    function confirmApplyImportedPlan() {
+      if (!pendingImportedPlan) return;
+
+      // Guardar punto de restauración antes de aplicar cambios
+      appState.backupBeforeImport = {
+        paloActual: appState.paloActual,
+        semanaActual: appState.semanaActual,
+        bpmReloj: appState.bpmReloj,
+        ajustesProfesor: appState.ajustesProfesor ? JSON.parse(JSON.stringify(appState.ajustesProfesor)) : null
+      };
+
+      if (pendingImportedPlan.paloRecomendado) appState.paloActual = pendingImportedPlan.paloRecomendado;
+      if (pendingImportedPlan.semanaRecomendada) appState.semanaActual = Number(pendingImportedPlan.semanaRecomendada);
+      if (pendingImportedPlan.bpmRecomendado) updateBpm(Number(pendingImportedPlan.bpmRecomendado));
+
+      // Si el profesor envía ejercicios nuevos estructurados, añadirlos al banco local
+      if (Array.isArray(pendingImportedPlan.ejerciciosNuevos)) {
+        pendingImportedPlan.ejerciciosNuevos.forEach(newEx => {
+          if (newEx.id && newEx.nombre && !BANCO_EJERCICIOS.some(e => e.id === newEx.id)) {
+            BANCO_EJERCICIOS.push(newEx);
+          }
+        });
+      }
+
+      appState.ajustesProfesor = pendingImportedPlan;
+      appState.historialRevisiones.push({
+        fechaImportacion: new Date().toISOString().split('T')[0],
+        diagnostico: pendingImportedPlan.diagnosticoPeriodo
+      });
+
+      saveState();
+      document.getElementById('importPreviewContainer').style.display = 'none';
+      pendingImportedPlan = null;
+      generateDailyPrescription();
+      renderProgramaView();
+      renderRevisionView();
+      showToast('Plan del profesor incorporado con éxito');
+    }
+
+    function rollbackPreviousPlan() {
+      if (!appState.backupBeforeImport) return;
+      appState.paloActual = appState.backupBeforeImport.paloActual;
+      appState.semanaActual = appState.backupBeforeImport.semanaActual;
+      updateBpm(appState.backupBeforeImport.bpmReloj);
+      appState.ajustesProfesor = appState.backupBeforeImport.ajustesProfesor;
+      appState.backupBeforeImport = null;
+      saveState();
+      generateDailyPrescription();
+      renderProgramaView();
+      renderRevisionView();
+      showToast('Planificación previa restaurada');
+    }
+
+    function downloadFullBackup() {
+      const blob = new Blob([JSON.stringify(appState, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `backup_total_cuarto_del_toque_${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Copia de seguridad descargada');
+    }
+
+    function restoreFullBackupFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const restored = JSON.parse(e.target.result);
+          if (!restored.version || !restored.competencias) {
+            alert('Archivo de copia de seguridad no válido.');
+            return;
+          }
+          appState = restored;
+          saveState();
+          initApp();
+          showToast('Copia de seguridad restaurada íntegramente');
+        } catch (err) {
+          alert('No se pudo leer el archivo JSON.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    /*************************************************************************
+     * NAVEGACIÓN Y ARRANQUE INICIAL
+     *************************************************************************/
+    function switchTab(tabName, btnEl) {
+      document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(`tab-${tabName}`);
+      if (target) target.classList.add('active');
+
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setupDurationSelector() {
+      const btns = document.querySelectorAll('#durationSelector .pill-btn');
+      btns.forEach(btn => {
+        const m = Number(btn.getAttribute('data-min'));
+        btn.classList.toggle('active', m === Number(appState.duracionPreferida));
+        btn.onclick = () => {
+          appState.duracionPreferida = m;
+          btns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          saveState();
+          generateDailyPrescription();
+          showToast(`Sesión adaptada a ${m} minutos`);
+        };
+      });
+    }
+
+    function initApp() {
+      loadState();
+      document.getElementById('headerPaloBadge').textContent = `Palo Activo · ${appState.paloActual}`;
+      document.getElementById('bpmValLabel').textContent = appState.bpmReloj;
+      document.getElementById('bpmSlider').value = appState.bpmReloj;
+
+      setupDurationSelector();
+      buildClockFace();
+      generateDailyPrescription();
+      renderProgramaView();
+      renderRepertorioView();
+      renderProgresoView();
+      renderRevisionView();
+    }
+
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
